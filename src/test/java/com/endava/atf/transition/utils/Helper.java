@@ -1,28 +1,24 @@
 package com.endava.atf.transition.utils;
 
 import java.util.concurrent.TimeUnit;
-
+import com.endava.atf.transition.config.Browser;
+import com.endava.atf.transition.config.WebDriverFactory;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import io.github.bonigarcia.wdm.WebDriverManager;
+
 
 public class Helper {
 
     private static Helper helperClass;
 
     private static WebDriver driver;
-    public final static int TIMEOUT = 10;
+//    public final static int TIMEOUT = 10;
 
     private Helper() {
-
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(TIMEOUT, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
+        driver = WebDriverFactory.getDriver(Browser.CHROME);
     }
 
-    public static void openPage(String url) {
-        driver.get(url);
+    public static void openPage() {
+        driver.get("http://localhost:8080/en-gb?route=common/home");
     }
 
     public static WebDriver getDriver() {
