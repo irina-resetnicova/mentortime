@@ -5,37 +5,49 @@
 
 package com.endava.atf.transition.config.DataBase;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.Connection; // подготавливает подключение к базе
+import java.sql.DriverManager; //обеспечивает подключение черезJDBC drivers
+import java.sql.SQLException; //обрабатывает SQL-ошибки, возникающие при взаимодействии приложении и базы данных.
+
 
 public class DbConnection {
 
-    private static Connection conn = null;
+    private static Connection connection = null;
 
-    private static Connection init() throws SQLException, ClassNotFoundException {
+    // инициализируем connection
+    private static Connection initialization() throws SQLException, ClassNotFoundException {
         final String DB_URL = "jdbc:mysql://localhost:3306/opencart";
         final String USER = "opencart";
         final String PASS = "opencart";
-        final String DRIVER = "com.mysql.jdbc.Driver";
 
-//        Class.forName("com.mysql.jdbc.Driver");
-
-        conn = DriverManager.getConnection(DB_URL, USER, PASS);
+        connection = DriverManager.getConnection(DB_URL, USER, PASS); // установливается соединение Connection с базой данных(параметры) через JDBC drivers
 
         System.out.println("Connected to database");
-        return conn;
+        return connection;
     }
+
+    //создаем connection
     public static Connection getInstance() {
-        if (conn == null) {
+        if (connection == null) {
             try {
-                conn = init();
+                connection = initialization();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
-        return conn;
+        return connection;
     }
 }
+
+
+
+//JDBC driver уже есть в dependency
+//<dependency>
+//<groupId>mysql</groupId>
+//<artifactId>mysql-connector-java</artifactId>
+//<version>8.0.16</version>
+//</dependency>
+
+
