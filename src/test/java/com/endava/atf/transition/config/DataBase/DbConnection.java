@@ -20,6 +20,8 @@ public class DbConnection {
         final String USER = "opencart";
         final String PASS = "opencart";
 
+// read values from AppConfiguration
+
         connection = DriverManager.getConnection(DB_URL, USER, PASS); // установливается соединение Connection с базой данных(параметры) через JDBC drivers
 
         System.out.println("Connected to database");
@@ -31,9 +33,7 @@ public class DbConnection {
         if (connection == null) {
             try {
                 connection = initialization();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }

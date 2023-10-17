@@ -9,9 +9,7 @@ import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.Graph
 public class DbManager {
 
     private Connection connection = DbConnection.getInstance(); // открыл сессию к дата бэйс // Open a connection
-    private Statement pstmt = connection.createStatement(); // через Statement делаешь реквесты дл я DB
-
-
+    private final Statement pstmt = connection.createStatement(); // через Statement делаешь реквесты дл я DB
 
     public Statement getPstmt() {
         return pstmt;

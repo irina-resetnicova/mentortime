@@ -1,25 +1,27 @@
 Feature: User Registration Positive Flow
 
   @Registration
+  @Severity(SeverityLevel.BLOCKER)
+  @Issue("OpenCart")
+  @Owner("IrinaResetnicova")
   Scenario Outline: A new User is successfully registered
     Given User is on the Home page
     And User is not registered
-    When User goes on Register page
-    And User fills firstName <firstName>
-    And User fills lastName <lastName>
-    And User fills email <email>
-    And User fills password <password>
-    And User clicks on newsletter
-    And User clicks on agreementOfThePrivacyPolicy
-    And User clicks on btn continue
+    When User presses My Account btn
+    And Register link from dropDown
+    And User goes on Register page
+    And User registers
+      | firstName   | lastName   | email   | password   |
+      | <firstName> | <lastName> | <email> | <password> |
     Then User is registered
-    And User is relocated on the page "Your Account Has Been Created!"
+    And User is relocated on the page Your Account Has Been Created!
     And The inscription "Your Account Has Been Created!" is appeared on the screen
-
+    And User presses My Account btn
+    And Register link from dropDown
 
     Examples:
       | firstName                         | lastName                         | email                                                                      | password             |
-      | I                                 | Petrov254                        | email@gmail.com                                                            | 123658               |
+      | I2                                | Petrov254                        | email@gmail.com                                                            | 123658               |
       | IrinaIrinaIrinaIrinaIrinaIrinaIri | PetrovFirst254                   | emailemail@gmail.com                                                       | 123658               |
       | Irina                             | P                                | gmailemailemail@gmail.com                                                  | 123658               |
       | Irina                             | PetrovPetrovPetrovPetrovPetrovPe | emailemail@gmail.com                                                       | 123658               |
@@ -31,31 +33,9 @@ Feature: User Registration Positive Flow
 # special characters are accepted
 # email max 74 characters
 
-  @UserRegistrationWithExistingUser
-  Scenario Outline: Registration with Existing User
-
-    Given User is on the Home page
-    And User is already registered
-    When User goes on Register page
-    And User fills firstName <firstName>
-    And User fills lastName <lastName>
-    And User fills email <email>
-    And User fills password <password>
-    And User clicks on newsletter
-    And User clicks on agreementOfThePrivacyPolicy
-    And User clicks on btn continue
-    Then User is not registered
-    And A warning message <warning message> is appeared on the screen
 
 
-    Examples:
-      | firstName                         | lastName                          | email           | password              |
-      |                                   | Petrov254                         | email@gmail.com | 123658                |
 
-
-# special characters are accepted
-# email: max 74 characters
-# defect: boundary password
 
 
 

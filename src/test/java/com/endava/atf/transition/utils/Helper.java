@@ -1,7 +1,6 @@
 package com.endava.atf.transition.utils;
 
-import java.util.concurrent.TimeUnit;
-import com.endava.atf.transition.config.Browser;
+import com.endava.atf.transition.config.DriverProvider;
 import com.endava.atf.transition.config.WebDriverFactory;
 import org.openqa.selenium.WebDriver;
 
@@ -11,15 +10,20 @@ public class Helper {
     private static Helper helperClass;
 
     private static WebDriver driver;
-//    public final static int TIMEOUT = 10;
+
 
     private Helper() {
-        driver = WebDriverFactory.getDriver(Browser.CHROME);
+        driver = WebDriverFactory.getDriver(DriverProvider.CHROME);
     }
 
     public static void openPage() {
-        driver.get("http://localhost:8080/en-gb?route=common/home");
+        driver.get("http://localhost:8080/");
     }
+
+    public static void openLoginPage() {
+        driver.get("http://localhost:8080/en-gb?route=account/login");
+    }
+
 
     public static WebDriver getDriver() {
         return driver;
@@ -27,16 +31,13 @@ public class Helper {
 
     public static void setUpDriver() {
 
-        if (helperClass==null) {
-
-            helperClass = new Helper();
-        }
+     driver = WebDriverFactory.getDriver(DriverProvider.CHROME);
     }
 
     public static void tearDown() {
 
         if(driver!=null) {
-            driver.close();
+//            driver.close();
             driver.quit();
         }
 

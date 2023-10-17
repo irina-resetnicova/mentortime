@@ -1,108 +1,112 @@
 package com.endava.atf.transition.definitions;
-import com.endava.atf.transition.config.Browser;
-import com.endava.atf.transition.config.WebDriverFactory;
+
+import com.endava.atf.transition.config.DriverProvider;
 import com.endava.atf.transition.config.DataBase.DbManager;
+import com.endava.atf.transition.config.WebDriverFactory;
+import com.endava.atf.transition.testDataUI.MethodsUI;
+import com.endava.atf.transition.testDataUI.RegistrationPage;
 import com.endava.atf.transition.utils.Helper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import com.endava.atf.transition.testData.RegistrationPage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
-public class StepDefinitions {
-    private DbManager dbManager;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+public class StepDefinitions  {
+
+    private static final Logger log = LogManager.getLogger(StepDefinitions.class);
     private static WebDriver webdriver;
     private RegistrationPage registrationPage = new RegistrationPage();
 
+
+    WebDriver driver = WebDriverFactory.getDriver(DriverProvider.CHROME);
+    private DbManager dbManager;
+
     static {
-        webdriver = WebDriverFactory.getDriver(Browser.CHROME);
+        webdriver = WebDriverFactory.getDriver(DriverProvider.CHROME);
 
     }
 
     public StepDefinitions(DbManager dbManager) {
         this.dbManager = dbManager;
     }
-    
-    //OpenCart.feature
-    WebDriver driver = WebDriverFactory.getDriver(Browser.CHROME);
 
     @Given("User is on the Home page")
-    public void userIsOnHomePage() {
-        Helper.openPage();
-//        webdriver.get("http://localhost:8080/en-gb?route=common/home");
+    public void userIsOnHomePage() throws Exception {
+
+       try {
+           Helper.openPage();
+           log.info("User is on the Home page");
+       }
+       catch(RuntimeException e){
+           log.error(String.valueOf(e));
+           throw e;
+
+       }
     }
 
     @And("User is not registered")
     public void userIsNotRegistered() {
-        
+        log.info("User is not registered");
+
         //select
         //resultset is empty
     }
 
-    @When("User goes on Register page")
+    @When("User presses My Account btn")
+    public void userPressesMyAccountBtn() {
+        log.info("User presses My Account btn");
+
+    }
+
+    @And("Register link from dropDown")
+    public void registerLinkFromDropDown() {
+        log.info("Register link from dropDown");
+    }
+
+    @And("User goes on Register page")
     public void userGoesOnRegisterPage() {webdriver.get("http://localhost:8080/en-gb?route=account/register");
+        log.info("User goes on Register page");
     }
 
-    @And("User fills firstName {}")
-    public void userFillsFirstName(String firstName) {
-        driver.findElement(registrationPage.getInputFirstName()).sendKeys(firstName);
+    //https://www.baeldung.com/cucumber-data-tables
+    @And("User registers")
+    public void userRegisters(DataTable table) {
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
+        Map<String, String> row = rows.get(0); // use for use documentation
+        if(row.get("email") == "randomEmail"){
+            row.put("email", MethodsUI.randomEmail());
+        }
+        driver.findElement(registrationPage.getInputFirstName()).sendKeys(row.get("firstName"));
+        driver.findElement(registrationPage.getInputLastName()).sendKeys(row.get("lastName"));
+        driver.findElement(registrationPage.getInputEmail()).sendKeys(row.get("email"));
+        driver.findElement(registrationPage.getInputPassword()).sendKeys(row.get("password"));
+        driver.findElement(registrationPage.getSliderAgree()).sendKeys(Keys.ARROW_RIGHT);
+        driver.findElement(registrationPage.getBtnContinue()).submit();
 
-    }
-
-    @And("User fills lastName {}")
-    public void userFillsLastName(String lastName) {
-        driver.findElement(registrationPage.getInputLastName()).sendKeys(lastName);
-
-    }
-
-    @And("User fills email {}")
-    public void userFillsEmailEmail(String email) {
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(email);
-    }
-
-
-    @And("User fills password {}")
-    public void userFillsPassword(String password) {
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(password);
-
-    }
-
-    @And("User clicks on newsletter")
-    public void userClicksOnNewsletter() {
-        driver.findElement(registrationPage.getBtnAgree()).click();
-
-    }
-
-    @And("User clicks on agreementOfThePrivacyPolicy")
-    public void userClicksOnAgreementOfThePrivacyPolicy() {
-        WebElement element = driver.findElement(registrationPage.getBtnAgree());
-        Actions actions = new Actions(driver);
-        actions.moveToElement(element);
-        actions.perform();
-//        driver.findElement(registrationPage.getBtnAgree()).click();
-
-    }
-
-    @And("User clicks on btn continue")
-    public void userClicksBContinue() {
-        driver.findElement(registrationPage.getBtnContinue()).click();
+        log.info("User registers: firstName");
+        log.info("User registers: lastName");
+        log.info("User registers: email");
+        log.info("User registers: password");
+        log.info("User moves slider on the rightSide");
+        log.info("User press the btn Continue");
 
     }
 
     @Then("User is registered")
     public void userIsRegistered() throws SQLException {
-        
+
         String QUERY = "select * from oc_user u where u.username = ''";
         ResultSet rs = new DbManager().getPstmt().executeQuery(QUERY);
         try {
@@ -119,72 +123,56 @@ public class StepDefinitions {
                 rs.close();
             }
         }
-        catch(SQLException se)
+        catch(SQLException ex)
             {
-//                 log exception
-                throw se;
+                log.error(ex.getMessage(), ex);
+                throw new SQLException(ex);
             }
     }
 
-    @Then("User is relocated on the page {string}")
+    @And("User is relocated on the page Your Account Has Been Created!")
     public void userIsRelocatedOnThePage() {
-        webdriver.get("http://localhost:8080/en-gb?route=account/success&customer_token=742ebc0b54291c7a7443e8f401");
+        webdriver.get("http://localhost:8080/en-gb?route=account/success&customer_token");
     }
-
-//    @And("The inscription {string} is appeared on the screen")
-//    public void theInscriptionIsAppearedOnTheScreen() {
-//        driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated());
-//    }
 
     @And("The inscription {string} is appeared on the screen")
-    public void theInscriptionIsAppearedOnTheScreen(String text) {
-        driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated()).getAttribute(text);
-    }
+    public void theInscriptionIsAppearedOnTheScreen(String string) {
+        driver.navigate().to("http://localhost:8080/en-gb?route=account/success&customer_token");
+        String getActualElement = driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated()).getText();
+        assertEquals(string, getActualElement, "The inscriptions are equals");
 
+    }
 
     @And("A warning message {} is appeared on the screen")
     public void aWarningMessageWarningMessageIsAppearedOnTheScreen(String warningMessage) {
-//        driver.findElement(registrationPage.getInscriptionFNBoundary()).getAttribute("First Name must be between 1 and 32 characters!");
-        
         driver.findElement(registrationPage.getLocatorByName(warningMessage));
     }
 
     @And("User is already registered")
     public void userIsAlreadyRegistered() throws SQLException {
 
-        String insertUserQuery = "INSERT INTO oc_user (firstname, lastname, email, password) " +
-                "VALUES ('Ira', 'Fedorova', 'mail@mail.com', '123456');";
-
         try {
+            String newFirstName = MethodsUI.randomFirstName();
+            String newLastName = MethodsUI.randomLastName();
+            String newEmail = MethodsUI.randomEmail();
+            String newPassword = MethodsUI.randomPassword();
+
+            String insertUserQuery = "INSERT INTO oc_user (firstname, lastname, email, password) " +
+                    "VALUES (newFirstName, newLastName, newEmail , newPassword)";
+
             int rsInsert = new DbManager().getPstmt().executeUpdate(insertUserQuery);
-            assertTrue(rsInsert==1, "User is already existed");
+
+            // insert user data into ScenarioContext
 
         }catch(RuntimeException e){
             log.error("Exception: DB insert exception");
             e.printStackTrace();
-
         }
-
-
     }
 
-    @And("User fills  credentials")
-    public void userFillsCredentials() {
-        
-    }
-       //https://www.baeldung.com/cucumber-data-tables
-    @And("User registers")
-    public void userRegisters(DataTable table) {
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
-        Map<String, String> row = rows.get(0); // use for use documentation
-
-        driver.findElement(registrationPage.getInputFirstName()).sendKeys(row.get("firstName"));
-        driver.findElement(registrationPage.getInputLastName()).sendKeys(row.get("lastName"));
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(row.get("email"));
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(row.get("password"));
-        driver.findElement(registrationPage.getBtnAgree()).click();
-        driver.findElement(registrationPage.getBtnContinue()).click();
-        driver.findElement(registrationPage.getBtnAgree()).click();
-
+    @And("User presses btn Continue")
+    public void userPressesBtnContinue() {
+        log.info("User presses My Account btn");
     }
 }
+
