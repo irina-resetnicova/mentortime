@@ -4,12 +4,11 @@ Feature: User Registration Positive Flow
   @Severity(SeverityLevel.BLOCKER)
   @Issue("OpenCart")
   @Owner("IrinaResetnicova")
+    @UI
   Scenario Outline: A new User is successfully registered
-    Given User is on the Home page
-    And User is not registered
-    When User presses My Account btn
-    And Register link from dropDown
-    And User goes on Register page
+
+    Given User is on Register page
+    And User does not have account
     And User registers
       | firstName   | lastName   | email   | password   |
       | <firstName> | <lastName> | <email> | <password> |

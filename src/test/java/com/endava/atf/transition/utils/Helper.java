@@ -37,7 +37,7 @@ public class Helper {
     public static void tearDown() {
 
         if(driver!=null) {
-//            driver.close();
+            driver.close();
             driver.quit();
         }
 

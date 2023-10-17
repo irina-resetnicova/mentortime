@@ -8,8 +8,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import java.io.File;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
+
 
 public class WebDriverFactory {
     private static final String CHROMEDRIVER_PATH = "src/test/resources/chromedriver.exe";
@@ -21,9 +20,9 @@ public class WebDriverFactory {
         initChromeDriverProperties();
     }
 
-//    public static WebDriver getDriver() {
-//        return driver;
-//    }
+    public static WebDriver getDriver() {
+        return driver;
+    }
 
     public static WebDriver getDriver(DriverProvider driverProvider) {
         if (null != driver) {

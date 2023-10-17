@@ -18,10 +18,23 @@ public class RegistrationPage {
     private By sliderAgree = By.xpath("//*[@id=\"form-register\"]/div/div/input");
     private By btnContinue = By.xpath("//*[@id=\"form-register\"]/div/button");
     private By inscriptionYourAccountHasBeenCreated = By.xpath("//*[@id=\"content\"]/h1");
-//    private By inscriptionYourAccountHasBeenCreated = By.xpath("//*[@id=\"content\"]/h1");
-//    private By inscriptionYourAccountHasBeenCreated = By.cssSelector("Your Account Has Been Created!");
+
+
+    private By firstNameField = By.xpath("//*[@id=\"input-firstname\"]");
 
     private String findByNamePattern = "//*[contains(text(),'%s')]";
+
+    public static WebDriver getWebdriver() {
+        return webdriver;
+    }
+
+    public By getFirstNameField() {
+        return firstNameField;
+    }
+
+    public String getFindByNamePattern() {
+        return findByNamePattern;
+    }
 
     public By getInputFirstName() {
         return inputFirstName;
