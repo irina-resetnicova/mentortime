@@ -215,10 +215,10 @@ public class StepDefinitions {
 //        String firstName, String lastName, String eMail, String passWord
 
         String initialPassword = "123456";
-        String initialEmail = MethodsUI.randomEmail();
 
-        String deleteCustomer = "DELETE FROM oc_customer WHERE email = 'john@gmail.com'";
-        int rsDelete = new DbManager().getPstmt().executeUpdate(deleteCustomer);
+        String deleteCustomer = "DELETE FROM oc_customer WHERE email IN (SELECT email FROM oc_customer GROUP BY email HAVING COUNT(email) > 1)";
+        int rsSelect0 = new DbManager().getPstmt().executeUpdate(deleteCustomer);
+
 
         String insertCustomer = "INSERT INTO oc_customer (customer_group_id, language_id,  firstname, lastname, email,telephone, password, custom_field, ip, status, safe, token, code, date_added) " +
                 "VALUES (55, 1, 'John', 'Doe', 'john@gmail.com', 37356987, 123456, '', '172.19.0.1', 1, 0, 123, 123, '2023-09-29 13:36:22')";
@@ -242,10 +242,6 @@ public class StepDefinitions {
                 System.out.println("Last name is: " + lastname);
                 System.out.println("Email is: " + email);
                 System.out.println("Password is: " + password);
-//                System.out.print("FirstName: " + rsSelect.getString("firstname"));
-//                System.out.print(", LastName: " + rsSelect.getString("lastname"));
-//                System.out.println(", Email: " + rsSelect.getString("email"));
-//                System.out.println(", password: " + rsSelect.getString("password"));
 
                 customers.add(firstname);
                 customers.add(lastname);

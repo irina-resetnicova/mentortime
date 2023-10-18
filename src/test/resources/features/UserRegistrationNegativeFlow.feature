@@ -23,7 +23,7 @@ Feature: User Registration Negative Flow
     Given User is on Register page
     When User try to register with existing account
     Then User is not registered
-#    And A warning message <warning message> is appeared on the screen
+#    And A warning message <john@gmail.com> is appeared on the screen
 #  <firstname>, <lastname>, <email>, <password>
 #    Examples:
 #      | firstName | lastName | email           | password | warning message|
