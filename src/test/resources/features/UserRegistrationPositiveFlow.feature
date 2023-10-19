@@ -1,10 +1,6 @@
 Feature: User Registration Positive Flow
 
-  @Registration
-  @Severity(SeverityLevel.BLOCKER)
-  @Issue("OpenCart")
-  @Owner("IrinaResetnicova")
-    @UI
+  @Registration@UI@CleanDB@
   Scenario Outline: A new User is successfully registered
     Given User is on Register page
     And User does not have account
@@ -13,7 +9,7 @@ Feature: User Registration Positive Flow
       | <firstName> | <lastName> | <email> | <password> |
     Then User is registered
     And User is relocated on the page Your Account Has Been Created!
-    And The inscription "Your Account Has Been Created!" is appeared on the screen
+    And The inscription Your Account Has Been Created! is appeared on the screen
     And User is on Register page
 
     Examples:

@@ -23,9 +23,9 @@ public class Helper {
     public static void openLoginPage() {
         driver.get("http://localhost:8080/en-gb?route=account/login");
     }
-    public static void openRegisterPage() {
-        driver.get("http://localhost:8080/en-gb?route=account/register");
-    }
+    public static void openRegisterPage() {driver.get("http://localhost:8080/en-gb?route=account/register");}
+
+    public static void openYourAccountHasBeenCreatedPage(){driver.get("http://localhost:8080/en-gb?route=account/success&customer_token");}
 
 
     public static WebDriver getDriver() {

@@ -3,9 +3,11 @@ package com.endava.atf.transition.definitions;
 import com.endava.atf.transition.config.DataBase.DbManager;
 import com.endava.atf.transition.config.DriverProvider;
 import com.endava.atf.transition.config.WebDriverFactory;
-import com.endava.atf.transition.testDataUI.MethodsUI;
 
 
+import com.endava.atf.transition.testDataUI.Queries;
+
+import com.endava.atf.transition.testDataUI.QueryDelete;
 import com.endava.atf.transition.testDataUI.RegistrationPage;
 import com.endava.atf.transition.utils.Helper;
 import io.cucumber.datatable.DataTable;
@@ -17,25 +19,35 @@ import io.cucumber.java.en.When;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.mindrot.jbcrypt.BCrypt;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+
+import java.sql.Connection;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import io.cucumber.java.Scenario;
-
 
 public class StepDefinitions {
 
     private static final Logger log = LogManager.getLogger(StepDefinitions.class);
     private static final WebDriver webdriver;
     private final RegistrationPage registrationPage = new RegistrationPage();
-    private Scenario scenario;
+    private static final Queries query;
+    Connection connection;
+
+    static {
+        try {
+            query = new Queries();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     WebDriver driver = WebDriverFactory.getDriver(DriverProvider.CHROME);
@@ -52,7 +64,7 @@ public class StepDefinitions {
 
 
     @Given("User is on Register page")
-    public void userGoesOnRegisterPage() {
+    public void userIsOnRegisterPage() {
         try {
             Helper.openRegisterPage();
             log.info("User is on register page");
@@ -65,11 +77,11 @@ public class StepDefinitions {
     }
 
     @Given("User does not have account")
-    public void userDoesNotHaveAccount() {
-        log.info("User is not registered");
+    public void userDoesNotHaveAccount() throws SQLException {
 
-        //// check DB
-        //resultset is empty
+        log.info("User is not registered");
+//        int rsDeleteAll = queryDelete.getPreparedStatementDeleteAll().executeUpdate();
+
     }
 
     //https://www.baeldung.com/cucumber-data-tables
@@ -84,7 +96,11 @@ public class StepDefinitions {
         driver.findElement(registrationPage.getInputLastName()).sendKeys(row.get("lastName"));
         driver.findElement(registrationPage.getInputEmail()).sendKeys(row.get("email"));
         driver.findElement(registrationPage.getInputPassword()).sendKeys(row.get("password"));
-        driver.findElement(registrationPage.getSliderAgree()).sendKeys(Keys.ARROW_RIGHT);
+
+        WebElement agreeSlider = driver.findElement(registrationPage.getSliderAgree());
+        JavascriptExecutor executor = (JavascriptExecutor)driver;
+        executor.executeScript("arguments[0].click();", agreeSlider);
+
         driver.findElement(registrationPage.getBtnContinue()).submit();
 
         log.info("User registers: firstName");
@@ -100,7 +116,7 @@ public class StepDefinitions {
     public void userIsRegistered() throws SQLException {
 
         String QUERY = "select * from oc_user u where u.username = ''";
-        ResultSet rs = new DbManager().getPstmt().executeQuery(QUERY);
+        ResultSet rs = new DbManager().getPreparedStatement().executeQuery(QUERY);
         try {
             while (rs.next()) {
 
@@ -122,23 +138,30 @@ public class StepDefinitions {
 
     @Then("User is relocated on the page Your Account Has Been Created!")
     public void userIsRelocatedOnThePage() {
-        webdriver.get("http://localhost:8080/en-gb?route=account/success&customer_token");
+        Helper.openYourAccountHasBeenCreatedPage();
     }
 
-    @Then("The inscription {string} is appeared on the screen")
+    @Then("The inscription {} is appeared on the screen")
     public void theInscriptionIsAppearedOnTheScreen(String string) {
-        driver.navigate().to("http://localhost:8080/en-gb?route=account/success&customer_token");
+//        driver.navigate().to("http://localhost:8080/en-gb?route=account/success&customer_token");
+        Helper.openYourAccountHasBeenCreatedPage();
         String getActualElement = driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated()).getText();
         assertEquals(string, getActualElement, "The inscriptions are equals");
 
     }
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @When("User fills firstName field {}")
     public void userFillsFirstNameField(String firstName) {
 
         driver.findElement(registrationPage.getInputFirstName()).sendKeys(firstName);
-        driver.findElement(registrationPage.getSliderAgree()).sendKeys(Keys.ARROW_RIGHT);
+
+        WebElement agreeSlider = driver.findElement(registrationPage.getSliderAgree());
+        JavascriptExecutor executor = (JavascriptExecutor)driver;
+        executor.executeScript("arguments[0].click();", agreeSlider);
+
         driver.findElement(registrationPage.getBtnContinue()).submit();
 
         log.info("User fills firstName");
@@ -182,109 +205,36 @@ public class StepDefinitions {
     }
 
 
-    @And("User is already registered")
+    @Given("User has already its account")
     public void userIsAlreadyRegistered() throws SQLException {
+        query.setParameters();
+        int rsDelete = query.getPreparedStatementDelete().executeUpdate();
+        int rsInsert = query.getPreparedStatementInsert().executeUpdate();
 
-        try {
-            String newFirstName = MethodsUI.randomFirstName();
-            String newLastName = MethodsUI.randomLastName();
-            String newEmail = MethodsUI.randomEmail();
-            String newPassword = MethodsUI.randomPassword();
-
-            String insertUserQuery = "INSERT INTO oc_user (firstname, lastname, email, password) " +
-                    "VALUES (newFirstName, newLastName, newEmail , newPassword)";
-
-            int rsInsert = new DbManager().getPstmt().executeUpdate(insertUserQuery);
-
-            // insert user data into ScenarioContext
-
-        } catch (RuntimeException e) {
-            log.error("Exception: DB insert exception");
-            e.printStackTrace();
-        }
     }
-
-    @And("User presses btn Continue")
-    public void userPressesBtnContinue() {
-        log.info("User presses My Account btn");
-    }
-
 
     @When("User try to register with existing account")
     public void userTryToRegisterWithExistingAccountFirstnameLastnameEmailPassword() throws SQLException {
-//        String firstName, String lastName, String eMail, String passWord
+        query.setParameters();
+        int rsInsert = query.getPreparedStatementInsert().executeUpdate();
 
-        String initialPassword = "123456";
-
-        String deleteCustomer = "DELETE FROM oc_customer WHERE email IN (SELECT email FROM oc_customer GROUP BY email HAVING COUNT(email) > 1)";
-        int rsSelect0 = new DbManager().getPstmt().executeUpdate(deleteCustomer);
-
-
-        String insertCustomer = "INSERT INTO oc_customer (customer_group_id, language_id,  firstname, lastname, email,telephone, password, custom_field, ip, status, safe, token, code, date_added) " +
-                "VALUES (55, 1, 'John', 'Doe', 'john@gmail.com', 37356987, 123456, '', '172.19.0.1', 1, 0, 123, 123, '2023-09-29 13:36:22')";
-        int rsInsert = new DbManager().getPstmt().executeUpdate(insertCustomer);
-
-        String selectCustomer = "SELECT * FROM oc_customer WHERE email = 'john@gmail.com'";
-        ResultSet rsSelect = new DbManager().getPstmt().executeQuery(selectCustomer);
-
-        System.out.println(" selectCustomer: " + selectCustomer);
-
-
-        List<String> customers = new ArrayList<>();
-        try {
-            while (rsSelect.next()) {
-
-                String firstname = rsSelect.getString("firstname");
-                String lastname = rsSelect.getString("lastname");
-                String email = rsSelect.getString("email");
-                String password = rsSelect.getString("password");
-                System.out.println("First name is: " + firstname);
-                System.out.println("Last name is: " + lastname);
-                System.out.println("Email is: " + email);
-                System.out.println("Password is: " + password);
-
-                customers.add(firstname);
-                customers.add(lastname);
-                customers.add(email);
-                customers.add(password);
-
-
-//                 rsSelect.close();
-
-            }
-        } catch (SQLException ex) {
-            log.error(ex.getMessage(), ex);
-
-        }
-
-        for (String element : customers) {
-            System.out.println("List  " + element);
-        }
-
-        System.out.println("get element index 0 " + customers.get(0));
-
-
-
-        // Генерируем хеш пароля
-        String hashedPassword = BCrypt.hashpw(initialPassword, BCrypt.gensalt());
-        System.out.println("password hash: " + hashedPassword);
-
-        boolean condition = BCrypt.checkpw(customers.get(3), hashedPassword);
-
-        System.out.println(condition);
-
-//        if (condition == false) {
-//            log.error("this step is failed: ");
-//            scenario.fail
-
-            driver.findElement(registrationPage.getInputFirstName()).sendKeys(customers.get(0));
-            driver.findElement(registrationPage.getInputLastName()).sendKeys(customers.get(1));
-            driver.findElement(registrationPage.getInputEmail()).sendKeys(customers.get(2));
-            driver.findElement(registrationPage.getInputPassword()).sendKeys(initialPassword);
-            driver.findElement(registrationPage.getSliderAgree()).sendKeys(Keys.ARROW_RIGHT);
-            driver.findElement(registrationPage.getBtnContinue()).submit();
-        }
+        driver.findElement(registrationPage.getInputFirstName()).sendKeys(query.getFirstnameValue());
+        driver.findElement(registrationPage.getInputLastName()).sendKeys(query.getLastnameValue());
+        driver.findElement(registrationPage.getInputEmail()).sendKeys(query.getEmailValue());
+        driver.findElement(registrationPage.getInputPassword()).sendKeys(query.getPasswordValue());
+        driver.findElement(registrationPage.getSliderAgree()).sendKeys(Keys.ARROW_RIGHT);
+        driver.findElement(registrationPage.getBtnContinue()).submit();
     }
+
+    @Then("Warning message {} is appeared on the screen")
+    public void aWarningEMailAddressIsAlreadyRegisteredIsAppearedOnTheScreen(String warning) {
+
+        String getActualWarningMessage = driver.findElement(registrationPage.getWarningEMailAddressIsAlreadyRegistered()).getText();
+        assertEquals(warning, getActualWarningMessage, "The inscriptions are equals");
+    }
+
+
+}
 
 
 

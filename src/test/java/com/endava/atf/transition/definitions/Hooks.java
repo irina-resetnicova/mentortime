@@ -1,5 +1,6 @@
 package com.endava.atf.transition.definitions;
 
+import com.endava.atf.transition.testDataUI.QueryDelete;
 import com.endava.atf.transition.utils.Helper;
 import io.cucumber.java.*;
 import io.restassured.RestAssured;
@@ -7,10 +8,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import java.sql.SQLException;
 
 
 public class Hooks {
     private static final Logger log = LogManager.getLogger(Hooks.class);
+    static QueryDelete queryDelete;
+
+    static {
+        try {
+            queryDelete = new QueryDelete();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Before
     public void setUpLogsBefore() {
@@ -30,6 +42,12 @@ public class Hooks {
     @Before("@UI")
     public static void info() {
         System.out.println("Test has been started");
+
+    }
+
+    @Before("@CleanDB")
+    public static void deleteAllUsers() throws SQLException {
+        int rsDeleteAll = queryDelete.getPreparedStatementDeleteAll().executeUpdate();
 
     }
 
