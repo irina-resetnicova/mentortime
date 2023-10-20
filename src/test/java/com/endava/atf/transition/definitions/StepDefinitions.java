@@ -3,15 +3,11 @@ package com.endava.atf.transition.definitions;
 import com.endava.atf.transition.config.DataBase.DbManager;
 import com.endava.atf.transition.config.DriverProvider;
 import com.endava.atf.transition.config.WebDriverFactory;
-
-
 import com.endava.atf.transition.testDataUI.Queries;
-
 import com.endava.atf.transition.testDataUI.QueryDelete;
 import com.endava.atf.transition.testDataUI.RegistrationPage;
 import com.endava.atf.transition.utils.Helper;
 import io.cucumber.datatable.DataTable;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -20,17 +16,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 import java.sql.Connection;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions {
@@ -39,6 +38,16 @@ public class StepDefinitions {
     private static final WebDriver webdriver;
     private final RegistrationPage registrationPage = new RegistrationPage();
     private static final Queries query;
+    private static final QueryDelete queryDeleteAll;
+
+    static {
+        try {
+            queryDeleteAll = new QueryDelete();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     Connection connection;
 
     static {
@@ -72,45 +81,55 @@ public class StepDefinitions {
             log.error(String.valueOf(e));
             throw e;
         }
-
-
     }
 
-    @Given("User does not have account")
+    @Given("User does not have any account with petrov@gmail.com")
     public void userDoesNotHaveAccount() throws SQLException {
 
-        log.info("User is not registered");
-//        int rsDeleteAll = queryDelete.getPreparedStatementDeleteAll().executeUpdate();
+        log.info("User does not have any account");
+        int rsDeleteAll = query.getPsDeleteAll().executeUpdate();
 
     }
 
     //https://www.baeldung.com/cucumber-data-tables
-    @And("User registers")
-    public void userRegisters(DataTable table) {
+
+
+    @When("User registers")
+    public void userRegisters(DataTable table) throws SQLException {
         List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
-        Map<String, String> row = rows.get(0); // use for use documentation
-//        if (row.get("email") == "randomEmail") {
-//            row.put("email", MethodsUI.randomEmail());
-//        }
-        driver.findElement(registrationPage.getInputFirstName()).sendKeys(row.get("firstName"));
-        driver.findElement(registrationPage.getInputLastName()).sendKeys(row.get("lastName"));
-        driver.findElement(registrationPage.getInputEmail()).sendKeys(row.get("email"));
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(row.get("password"));
 
-        WebElement agreeSlider = driver.findElement(registrationPage.getSliderAgree());
-        JavascriptExecutor executor = (JavascriptExecutor)driver;
-        executor.executeScript("arguments[0].click();", agreeSlider);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(50)); // Создание экземпляра WebDriverWait
 
-        driver.findElement(registrationPage.getBtnContinue()).submit();
+        for (Map<String, String> row : rows) {
 
-        log.info("User registers: firstName");
-        log.info("User registers: lastName");
-        log.info("User registers: email");
-        log.info("User registers: password");
-        log.info("User moves slider on the rightSide");
-        log.info("User press the btn Continue");
 
-    }
+                    WebElement inputFirstName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputFirstNameLocator()));
+                    inputFirstName.sendKeys(row.get("firstName"));
+
+                    WebElement inputLastName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputLastNameLocator()));
+                    inputLastName.sendKeys(row.get("lastName"));
+
+                    WebElement inputEmail = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputEmailLocator()));
+                    inputEmail.sendKeys(row.get("email"));
+
+                    WebElement inputPassword = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputPasswordLocator()));
+                    inputPassword.sendKeys(row.get("password"));
+
+                    WebElement agreeSlider = driver.findElement(registrationPage.getAgreeSliderLocator());
+                    JavascriptExecutor executor = (JavascriptExecutor) driver;
+                    executor.executeScript("arguments[0].click();", agreeSlider);
+
+                    driver.findElement(registrationPage.getBtnContinueRegister()).submit();
+
+                    log.info("User registers: firstName");
+                    log.info("User registers: lastName");
+                    log.info("User registers: email");
+                    log.info("User registers: password");
+                    log.info("User moves slider on the rightSide");
+                    log.info("User press the btn Continue");
+                }
+                }
+
 
     @Then("User is registered")
     public void userIsRegistered() throws SQLException {
@@ -119,9 +138,9 @@ public class StepDefinitions {
         ResultSet rs = new DbManager().getPreparedStatement().executeQuery(QUERY);
         try {
             while (rs.next()) {
-
-                System.out.print("ID: " + rs.getInt("user_id"));
-                System.out.print(", First: " + rs.getString("firstname"));
+                System.out.println();
+                System.out.println("ID: " + rs.getInt("user_id"));
+                System.out.println(", First: " + rs.getString("firstname"));
                 System.out.println(", Last: " + rs.getString("lastname"));
                 System.out.println(", username: " + rs.getString("username"));
                 String username = null;
@@ -136,18 +155,40 @@ public class StepDefinitions {
         }
     }
 
+
     @Then("User is relocated on the page Your Account Has Been Created!")
     public void userIsRelocatedOnThePage() {
         Helper.openYourAccountHasBeenCreatedPage();
+        log.info("User is relocated on the page Your Account Has Been Created!");
     }
 
     @Then("The inscription {} is appeared on the screen")
     public void theInscriptionIsAppearedOnTheScreen(String string) {
-//        driver.navigate().to("http://localhost:8080/en-gb?route=account/success&customer_token");
+
         Helper.openYourAccountHasBeenCreatedPage();
         String getActualElement = driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated()).getText();
-        assertEquals(string, getActualElement, "The inscriptions are equals");
+        assertEquals(string, getActualElement);
 
+        if(string == getActualElement){
+            log.info("The strings are equals");
+        } else{
+            log.error("Step failed: The strings are not equals" );
+
+        }
+        driver.findElement(registrationPage.getBtnContinueLocator()).click();
+
+        WebElement dropdownToggle = driver.findElement(registrationPage.getDropDownLocator()); // Это элемент, который открывает выпадающее окно
+        WebElement dropdownOption = driver.findElement(registrationPage.getBtnContinueDropDownLocator()); // Это элемент, который нужно выбрать
+        Actions actions = new Actions(driver);
+        actions.click(dropdownToggle).click(dropdownOption).build().perform();
+
+        try {
+            Helper.openRegisterPage();
+            log.info("User is on register page");
+        } catch (RuntimeException e) {
+            log.error(String.valueOf(e));
+            throw e;
+        }
     }
 
 
@@ -156,37 +197,182 @@ public class StepDefinitions {
     @When("User fills firstName field {}")
     public void userFillsFirstNameField(String firstName) {
 
-        driver.findElement(registrationPage.getInputFirstName()).sendKeys(firstName);
+        driver.findElement(registrationPage.getInputFirstNameLocator()).sendKeys(firstName);
 
-        WebElement agreeSlider = driver.findElement(registrationPage.getSliderAgree());
-        JavascriptExecutor executor = (JavascriptExecutor)driver;
+        WebElement agreeSlider = driver.findElement(registrationPage.getAgreeSliderLocator());
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
         executor.executeScript("arguments[0].click();", agreeSlider);
+        driver.findElement(registrationPage.getBtnContinueLocator()).submit();
 
-        driver.findElement(registrationPage.getBtnContinue()).submit();
-
-        log.info("User fills firstName");
+        log.info("User fills its firstName");
 
     }
 
     @Then("User is not registered")
-    public void userIsNotRegistered() {
-        String expectedURL = "http://localhost:8080/en-gb?route=account/register";
-        String currentURL = webdriver.getCurrentUrl();
-        Assert.assertEquals(expectedURL, currentURL);
+    public void userIsNotRegistered() throws SQLException {
+        ResultSet rsSelect = query.getPsSelect().executeQuery();
+        System.out.println("List of customers with email: " + query.getEmailValue());
 
-        if (expectedURL.equals(currentURL)) {
-            System.out.println("The URLs are equals");
-        } else {
-            log.error("The URLs are not equals");
+        while (rsSelect.next()) {
+            System.out.println("firstname: " + rsSelect.getString("firstname"));
+            System.out.println("lastname: " + rsSelect.getString("lastname"));
+            System.out.println("email: " + rsSelect.getString("email"));
+            System.out.println("password: " + rsSelect.getString("password"));
+            System.out.println();
+
+        }
+        rsSelect.close();
+        ResultSet rsCount = query.getPsCount().executeQuery();
+
+        while (rsCount.next()) {
+            String email = rsCount.getString("email");
+            int userCount = rsCount.getInt("user_count");
+
+            System.out.printf("Count of customers with email %s: %d%n%n", email, userCount);
+
+            int expectUserCount = 1;
+            Assert.assertEquals(userCount, expectUserCount);
+
+            if (userCount == 1) {
+                log.info("User can not register with existing account");
+            } else {
+                log.error("User registers with existing account");
+            }
+        }
+    }
+
+
+
+        @Then("User does not relocated onto another page")
+        public void notRelocatedOntoAnotherPage () {
+            String expectedURL = "http://localhost:8080/en-gb?route=account/register";
+            String currentURL = webdriver.getCurrentUrl();
+            Assert.assertEquals(expectedURL, currentURL);
+
+            if (expectedURL.equals(currentURL)) {
+                log.info("User does not relocated onto another page");
+            } else {
+                log.error("The URLs are not equals");
+            }
         }
 
-        // check DB
+
+
+
+
+
+
+        @Given("User has already its account")
+        public void userIsAlreadyRegistered () throws SQLException {
+            query.setParameters();
+            int rsDelete = query.getPsDelete().executeUpdate();
+            int rsInsert = query.getPsInsert().executeUpdate();
+            log.info("User has already its account");
+
+        }
+
+        @When("User try to register with existing account")
+        public void userTryToRegisterWithExistingAccountFirstnameLastnameEmailPassword () throws SQLException {
+            query.setParameters();
+
+            driver.findElement(registrationPage.getInputFirstNameLocator()).sendKeys(query.getFirstnameValue());
+            driver.findElement(registrationPage.getInputLastNameLocator()).sendKeys(query.getLastnameValue());
+            driver.findElement(registrationPage.getInputEmailLocator()).sendKeys(query.getEmailValue());
+            driver.findElement(registrationPage.getInputPasswordLocator()).sendKeys(query.getPasswordValue());
+
+            WebElement agreeSlider = driver.findElement(registrationPage.getAgreeSliderLocator());
+            JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].click();", agreeSlider);
+            driver.findElement(registrationPage.getBtnContinueRegister()).submit();
+
+
+
+            log.info("User try to register with existing account");
+        }
+
+        @Then("Warning message {} is appeared on the screen")
+        public void aWarningEMailAddressIsAlreadyRegisteredIsAppearedOnTheScreen (String alert){
+
+
+            String getActualWarningMessage = driver.findElement(registrationPage.getAlertEmailAddressIsAlreadyRegistered()).getText();
+            assertEquals(alert, getActualWarningMessage);
+            log.info("Warning message is appeared on the screen");
+        }
+
+/////////////////////////////////////////////////////////////////////////////////
+    @When("User registers with wrong firstname")
+    public void userRegistersWithWrongFirstname(DataTable table) {
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(50)); // Создание экземпляра WebDriverWait
+
+        for (Map<String, String> row : rows) {
+
+            WebElement inputFirstName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputFirstNameLocator()));
+            inputFirstName.sendKeys(row.get("firstName"));
+
+            WebElement inputLastName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputLastNameLocator()));
+            inputLastName.sendKeys(row.get("lastName"));
+
+            WebElement inputEmail = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputEmailLocator()));
+            inputEmail.sendKeys(row.get("email"));
+
+            WebElement inputPassword = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputPasswordLocator()));
+            inputPassword.sendKeys(row.get("password"));
+
+            WebElement agreeSlider = driver.findElement(registrationPage.getAgreeSliderLocator());
+            JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].click();", agreeSlider);
+
+            driver.findElement(registrationPage.getBtnContinueRegister()).submit();
+
+            log.info("User registers: firstName");
+            log.info("User registers: lastName");
+            log.info("User registers: email");
+            log.info("User registers: password");
+            log.info("User moves slider on the rightSide");
+            log.info("User press the btn Continue");
+        }
+
+    }
+
+    @Then("User is not registered with entered credential")
+    public void userIsNotRegisteredWithEnteredCredential() throws SQLException {
+
+        ResultSet rsSelect = query.getPsSelectAllUsers().executeQuery();
+        while (rsSelect.next()) {
+            System.out.println("email: " + rsSelect.getString("email"));
+            System.out.println();
+
+        }
+        rsSelect.close();
+
+        ResultSet rsCountAll = query.getPsCountAll().executeQuery();
+
+        while (rsCountAll.next()) {
+            String email = rsCountAll.getString("email");
+            int userCount = rsCountAll.getInt("user_count");
+
+
+            System.out.printf("Count of customers with email %s: %d%n%n", email, userCount);
+
+            int expectUserCount = 1;
+            Assert.assertEquals(userCount, expectUserCount);
+
+            if (userCount == 1) {
+                log.info("User can not register with existing account");
+            } else {
+                log.error("User registers with existing account");
+            }
+        }
     }
 
     @Then("A warning message {} is appeared on the screen")
-    public void aWarningMessageWarningMessageIsAppearedOnTheScreen(String warningMessage) {
+    public void aWarningMessageWarningMessageIsAppearedOnTheScreen (String warningMessage){
         WebElement element1 = driver.findElement(registrationPage.getLocatorByName(warningMessage));
         String warningAsText1 = element1.getText();
+
+
         String warningAsText2 = "First Name must be between 1 and 32 characters!";
 
         if (warningAsText1.equals(warningAsText2)) {
@@ -197,44 +383,20 @@ public class StepDefinitions {
         Assert.assertEquals(warningAsText1, warningAsText2);
 
     }
-
     @Then("Get the fields clear")
-    public void getTheFieldsClear() {
-        WebElement textField = driver.findElement(registrationPage.getFirstNameField());
-        textField.clear();
+    public void getTheFieldsClear () {
+//        WebElement textField = driver.findElement(registrationPage.getFirstNameField());
+//        textField.clear();
     }
 
+    @And("User does not have any ACCOUNTS")
+    public void userDoesNotHaveAnyACCOUNTS() throws SQLException {
 
-    @Given("User has already its account")
-    public void userIsAlreadyRegistered() throws SQLException {
-        query.setParameters();
-        int rsDelete = query.getPreparedStatementDelete().executeUpdate();
-        int rsInsert = query.getPreparedStatementInsert().executeUpdate();
-
+        log.info("User does not have any ACCOUNTS");
+        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
     }
-
-    @When("User try to register with existing account")
-    public void userTryToRegisterWithExistingAccountFirstnameLastnameEmailPassword() throws SQLException {
-        query.setParameters();
-        int rsInsert = query.getPreparedStatementInsert().executeUpdate();
-
-        driver.findElement(registrationPage.getInputFirstName()).sendKeys(query.getFirstnameValue());
-        driver.findElement(registrationPage.getInputLastName()).sendKeys(query.getLastnameValue());
-        driver.findElement(registrationPage.getInputEmail()).sendKeys(query.getEmailValue());
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(query.getPasswordValue());
-        driver.findElement(registrationPage.getSliderAgree()).sendKeys(Keys.ARROW_RIGHT);
-        driver.findElement(registrationPage.getBtnContinue()).submit();
-    }
-
-    @Then("Warning message {} is appeared on the screen")
-    public void aWarningEMailAddressIsAlreadyRegisteredIsAppearedOnTheScreen(String warning) {
-
-        String getActualWarningMessage = driver.findElement(registrationPage.getWarningEMailAddressIsAlreadyRegistered()).getText();
-        assertEquals(warning, getActualWarningMessage, "The inscriptions are equals");
-    }
-
-
 }
+
 
 
 

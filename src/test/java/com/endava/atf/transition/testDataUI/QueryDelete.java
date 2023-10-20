@@ -4,31 +4,31 @@ import java.sql.*;
 
 public class QueryDelete {
     private Connection connection;
-    private PreparedStatement preparedStatementDeleteMy;
-    private PreparedStatement preparedStatementDeleteAll;
+//    private PreparedStatement psDeleteAllCustomers;
+    private PreparedStatement psDeleteAll;
 
-    public PreparedStatement getPreparedStatementDeleteMy() {
-        return preparedStatementDeleteMy;
-    }
+//    public PreparedStatement getPsDeleteAllCustomers() {
+//        return psDeleteAllCustomers;
+//    }
 
-    public PreparedStatement getPreparedStatementDeleteAll() {
-        return preparedStatementDeleteAll;
+    public PreparedStatement getPsDeleteAll() {
+        return psDeleteAll;
     }
 
     public QueryDelete() throws SQLException {
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/opencart", "opencart", "opencart");
 
-            String emailsToDelete = "email@gmail.com,emailemail@gmail.com,gmailemailemail@gmail.com";
-
-            String deleteMyCustomers = "DELETE FROM oc_customer " +
-                    "WHERE email IN (" + emailsToDelete + ") " +
-                    "AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email IN (" + emailsToDelete + "))";
-
-            preparedStatementDeleteMy = connection.prepareStatement(deleteMyCustomers);
+//            String emailsToDelete = "email@gmail.com,emailemail@gmail.com,gmailemailemail@gmail.com";
+//
+//            String deleteMyCustomers = "DELETE FROM oc_customer " +
+//                    "WHERE email IN (" + emailsToDelete + ") " +
+//                    "AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email IN (" + emailsToDelete + "))";
+//
+//            psDeleteAllCustomers = connection.prepareStatement(deleteMyCustomers);
 
             String deleteAllCustomers = "DELETE FROM oc_customer";
-            preparedStatementDeleteAll = connection.prepareStatement(deleteAllCustomers);
+           psDeleteAll = connection.prepareStatement(deleteAllCustomers);
 
 
 

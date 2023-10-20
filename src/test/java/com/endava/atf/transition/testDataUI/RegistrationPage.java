@@ -11,79 +11,75 @@ public class RegistrationPage {
         webdriver = WebDriverFactory.getDriver(DriverProvider.CHROME);
     }
 
-    private By inputFirstName = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-firstname']");
-    private By inputLastName = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-lastname']");
-    private By inputEmail = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-email']");
-    private By inputPassword = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-password']");
-
-    private By sliderAgree = By.xpath("//*[@id='form-register']/div/div/input");
-
-
-
-
-
-    private By btnContinue = By.xpath("//*[@id=\"form-register\"]/div/button");
-
-
+    private By inputFirstNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-firstname']");
+    private By inputLastNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-lastname']");
+    private By inputEmailLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-email']");
+    private By inputPasswordLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-password']");
+    private By agreeSliderLocator = By.xpath("//*[@id='form-register']/div/div/input");
     private By inscriptionYourAccountHasBeenCreated = By.xpath("//*[@id=\"content\"]/h1");
-    private By WarningEMailAddressIsAlreadyRegistered = By.xpath("//*[@id=\"alert\"]");
+    private By btnContinue = By.xpath("//*[@id=\"content\"]/div/a");
+    private By btnContinueRegister = By.xpath("//*[@id=\"form-register\"]/div/button");
+    private By btnContinueDropDownLocator = By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/ul/li[5]/a");
+    private By dropDownLocator = By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/a/span");
+    private By logoutLocator = By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/ul/li[5]/a");
 
+    private By alertEmailAddressIsAlreadyRegistered = By.xpath("//*[@id=\"alert\"]");
 
-    private By firstNameField = By.xpath("//*[@id=\"input-firstname\"]");
-
-    private String findByNamePattern = "//*[contains(text(),'%s')]";
-
-    public static WebDriver getWebdriver() {
-        return webdriver;
+    //First Name must be between 1 and 32 characters!
+    private String findByNamePattern = "//*[@id=\"error-firstname\"]";
+    public By getLocatorByName(String  warningMessage){
+        By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
+        return warningMessageLocator;
     }
 
-    public By getFirstNameField() {
-        return firstNameField;
+    public By getLogoutLocator() {
+        return logoutLocator;
     }
 
-    public String getFindByNamePattern() {
-        return findByNamePattern;
+    public By getDropDownLocator() {
+        return dropDownLocator;
+    }
+    public By getBtnContinueDropDownLocator() {
+        return btnContinueDropDownLocator;
     }
 
-    public By getInputFirstName() {
-        return inputFirstName;
+    public By getBtnContinueLocator() {
+        return btnContinue;
     }
 
-    public By getInputLastName() {
-        return inputLastName;
+    public By getBtnContinueRegister() {
+        return btnContinueRegister;
     }
 
-    public By getWarningEMailAddressIsAlreadyRegistered() {
-        return WarningEMailAddressIsAlreadyRegistered;
+    public By getInputFirstNameLocator() {
+        return inputFirstNameLocator;
     }
 
-    public By getInputPassword() {
-        return inputPassword;
+    public By getInputLastNameLocator() {
+        return inputLastNameLocator;
     }
 
-    public By getInputEmail() {
-        return inputEmail;
+    public By getAlertEmailAddressIsAlreadyRegistered() {
+        return alertEmailAddressIsAlreadyRegistered;
     }
 
-    public By getSliderAgree() {
-        return sliderAgree;
+    public By getInputPasswordLocator() {
+        return inputPasswordLocator;
+    }
+
+    public By getInputEmailLocator() {
+        return inputEmailLocator;
+    }
+
+    public By getAgreeSliderLocator() {
+        return agreeSliderLocator;
     }
 
     public By getInscriptionYourAccountHasBeenCreated() {
         return inscriptionYourAccountHasBeenCreated;
     }
 
-    public By getBtnContinue() {
-        return btnContinue;
 
-    }
-
-
-    public By getLocatorByName(String  warningMessage){
-        By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
-        return warningMessageLocator;
-
-    }
 
 }
 

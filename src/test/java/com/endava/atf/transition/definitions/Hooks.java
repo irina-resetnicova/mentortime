@@ -13,11 +13,11 @@ import java.sql.SQLException;
 
 public class Hooks {
     private static final Logger log = LogManager.getLogger(Hooks.class);
-    static QueryDelete queryDelete;
+    static QueryDelete queryDeleteAll;
 
     static {
         try {
-            queryDelete = new QueryDelete();
+            queryDeleteAll = new QueryDelete();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -45,11 +45,11 @@ public class Hooks {
 
     }
 
-    @Before("@CleanDB")
-    public static void deleteAllUsers() throws SQLException {
-        int rsDeleteAll = queryDelete.getPreparedStatementDeleteAll().executeUpdate();
-
-    }
+//    @Before("@CleanDB")
+//    public static void deleteAllUsers() throws SQLException {
+//        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
+//
+//    }
 
     @After("@UI")
     public static void tearDown(Scenario scenario) {
