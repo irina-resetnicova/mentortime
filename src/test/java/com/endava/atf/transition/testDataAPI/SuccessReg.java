@@ -13,6 +13,22 @@ public class SuccessReg {
     public SuccessReg() {
     }
 
+    @Override
+    public String toString() {
+        return "SuccessReg{" +
+                "id=" + id +
+                ", token='" + token + '\'' +
+                '}';
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public Integer getId() {
         return id;
     }

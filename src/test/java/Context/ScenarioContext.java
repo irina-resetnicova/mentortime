@@ -1,6 +1,10 @@
 package Context;
 
+import com.endava.atf.transition.testDataAPI.UserData;
+import org.w3c.dom.UserDataHandler;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScenarioContext {
@@ -17,11 +21,12 @@ public class ScenarioContext {
         return scenarioContext.get(key);
     }
 
-    //public boolean contains(String key) {return scenarioContext.containsKey(key);}
-
     public void clearContext() {
         scenarioContext.clear();
     }
+
+
+
 
 
 }

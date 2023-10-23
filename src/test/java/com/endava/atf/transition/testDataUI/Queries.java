@@ -75,9 +75,6 @@ public class Queries {
 
 
 
-
-
-
             String deleteAllCustomers = "DELETE FROM oc_customer WHERE email = 'petrov@gmail.com' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = 'petrov@gmail.com');";
             psDeleteAll = connection.prepareStatement(deleteAllCustomers);
 

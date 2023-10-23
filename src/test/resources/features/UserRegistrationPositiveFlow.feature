@@ -3,7 +3,7 @@ Feature: User Registration Positive Flow
   @Registration@UI@CleanDB
   Scenario Outline: A new User is successfully registered
     Given User is on Register page
-    And User does not have any ACCOUNTS
+#    And User does not have any ACCOUNTS
     When User registers
       | firstName   | lastName   | email   | password   |
       | <firstName> | <lastName> | <email> | <password> |

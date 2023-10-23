@@ -7,6 +7,13 @@ public class UnSuccessReg {
     public UnSuccessReg() {
     }
 
+    @Override
+    public String toString() {
+        return "UnSuccessReg{" +
+                "error='" + error + '\'' +
+                '}';
+    }
+
     public UnSuccessReg(String error) {
         this.error = error;
     }

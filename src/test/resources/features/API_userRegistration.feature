@@ -2,7 +2,8 @@ Feature: User Registration API
 
   @Registration @API @SmokeTest @Post
     Scenario: User can be registered successfully
-    Given the base URI is set to https: "https://reqres.in/"
+    Given The base URI is set to https: "https://reqres.in/"
     When POST request is sent to the Server: "api/register"
-    Then status-code 200 appears on the screen
+    Then Get Post response
+    Then Response code is 200
     And result is not null
