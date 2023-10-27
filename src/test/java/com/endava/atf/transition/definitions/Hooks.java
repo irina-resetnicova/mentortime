@@ -23,33 +23,35 @@ public class Hooks {
         }
     }
 
-
     @Before
     public void setUpLogsBefore() {
         log.info("Test started");
     }
+
     @After
     public void setUpLogsAfter() {
         log.info("Test finished");
     }
 
+    @Before("@API")
+    public void setUpApi() {
+        RestAssured.requestSpecification = ApiSpecifications.getRequestSpecification();
+        RestAssured.responseSpecification = ApiSpecifications.getResponseSpecification();
+//        RestAssured.port = 443;
+    }
+
+
+    @After("@API")
+    public static void tearDown() {
+        Helper.tearDown();
+    }
+
 
     @Before("@UI")
-    public static void setUp() {
+    public void setUp() {
+        RestAssured.port = 8080;
         Helper.setUpDriver();
     }
-
-    @Before("@UI")
-    public static void info() {
-        System.out.println("Test has been started");
-
-    }
-
-//    @Before("@CleanDB")
-//    public static void deleteAllUsers() throws SQLException {
-//        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
-//
-//    }
 
     @After("@UI")
     public static void tearDown(Scenario scenario) {
@@ -61,24 +63,18 @@ public class Hooks {
 //        Helper.tearDown();
 
 
-    }
-
-
-    @After("@API")
-    public static void tearDown() {
-        Helper.tearDown();
-    }
-
-//    @Before("@API")
-//    public void setup() {
-//        RestAssured.port = 443;
+//    @Before("@CleanDB")
+//    public static void deleteAllUsers() throws SQLException {
+//        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
+//
 //    }
-
-    @Before("@UI")
-    public void setupPort() {
-        RestAssured.port = 8080;
     }
 }
+
+
+
+
+
 
 
 

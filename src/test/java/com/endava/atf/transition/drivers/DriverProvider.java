@@ -1,4 +1,4 @@
-package com.endava.atf.transition.config;
+package com.endava.atf.transition.drivers;
 
 public enum DriverProvider {
     CHROME,

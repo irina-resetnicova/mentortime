@@ -1,8 +1,8 @@
 package com.endava.atf.transition.definitions;
 
 import com.endava.atf.transition.config.DataBase.DbManager;
-import com.endava.atf.transition.config.DriverProvider;
-import com.endava.atf.transition.config.WebDriverFactory;
+import com.endava.atf.transition.drivers.DriverProvider;
+import com.endava.atf.transition.drivers.WebDriverFactory;
 import com.endava.atf.transition.testDataUI.Queries;
 import com.endava.atf.transition.testDataUI.QueryDelete;
 import com.endava.atf.transition.testDataUI.RegistrationPage;

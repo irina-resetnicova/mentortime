@@ -1,6 +1,6 @@
 package com.endava.atf.transition.testDataUI;
-import com.endava.atf.transition.config.DriverProvider;
-import com.endava.atf.transition.config.WebDriverFactory;
+import com.endava.atf.transition.drivers.DriverProvider;
+import com.endava.atf.transition.drivers.WebDriverFactory;
 import org.openqa.selenium.*;
 
 

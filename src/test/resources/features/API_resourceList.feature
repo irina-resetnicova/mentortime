@@ -1,14 +1,16 @@
 Feature: List<RESOURCE>
+  Background:
+    Given The base URI is set to https: "https://reqres.in/"
+
   @UsersList @API @Get @SmokeTest @Regression
 Scenario: List<RESOURCE> return data
-    Given The base URI is set to https: "https://reqres.in/"
     When GET request is sent to server: "api/unknown"
-    Then Get response ContentType JSON
-    And Response code is 200
+    Then Response code is 200
+    And Get response ContentType JSON
 
+  @UsersList @API @Get @SmokeTest @Regression
   Scenario:  List<RESOURCE> can be sorted by years
-    Given The base URI is set to https: "https://reqres.in/"
     When GET request is sent to server: "api/unknown"
-    Then Get response ContentType JSON
-    And Response code is 200
+    Then Response code is 200
+    And Get response ContentType JSON
     And List<RESOURCE> can be sorted by years

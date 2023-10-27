@@ -1,4 +1,4 @@
-package com.endava.atf.transition.config;
+package com.endava.atf.transition.drivers;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
