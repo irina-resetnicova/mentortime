@@ -9,6 +9,7 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -26,50 +27,48 @@ public class StepDefApi2 {
     private SuccessReg successReg;
     private UnSuccessReg unSuccessReg;
     Response response;
+    ResponseSuccessRegistration responseSucReg = new ResponseSuccessRegistration();
 
     private static final Logger log = LogManager.getLogger(StepDefinitionsAPI.class);
 
     public StepDefApi2(ScenarioContext scenarioContext) {
         this.scenarioContext = scenarioContext;
     }
-    ResponseBody responseBody = new ResponseBody();
     HashMap<Object, Object> map = new HashMap<Object, Object>();
-
 
     @Given("The base URI is set to https: {string}")
     public void theBaseURIIsSetToHttps(String baseURI) {
         RestAssured.baseURI = baseURI;
-        log.info("the base URI is set");
+        log.info("The base URI is set");
     }
 
     @When("GET request is sent to server: {string}")
     public void getRequestIsSentToServer(String endpoint) {
+        log.info("GET request is sent to server");
         response = given().
+                header("Accept", "application/json").
+                contentType(ContentType.JSON).
                 when().
                 get(endpoint);
-
-        log.info("GET request is sent to server");
-    }
-
-    @Then("Get response ContentType JSON")
-    public void listOfUsersAppearsOnTheScreen() {
-        log.info("Get response in ContentType JSON");
-        response.then().log().all().
-                contentType(ContentType.JSON).
-                extract().response();
-
-        int actualStatusCode = response.getStatusCode();
-        scenarioContext.setContext("statusCode", actualStatusCode);
-
     }
 
     @Then("Response code is {int}")
     public void responseCodeIs(int expectedStatusCode) {
         log.info("Response code should be 200");
-        response.then().log().all()
-                .contentType(ContentType.JSON)
+        response.then().
+                log().all()
                 .assertThat()
                 .statusCode(expectedStatusCode);
+
+    }
+
+    @Then("Get response ContentType JSON")
+    public void listOfUsersAppearsOnTheScreen() {
+        log.info("Get response in ContentType JSON");
+        response.then().
+                log().all().
+                contentType(ContentType.JSON).
+                extract().response();
 
     }
 
@@ -126,22 +125,20 @@ public class StepDefApi2 {
 
     @When("POST request is sent to the Server: {string}")
     public void postRequestIsSentToTheServer(String endpoint) {
-         HashMap<Object, Object> map = new HashMap<Object, Object>();
+        log.info("POST request is sent to the Server");
+//         HashMap<Object, Object> map = new HashMap<Object, Object>();
         
         map.put("email", "eve.holt@reqres.in");
         map.put("password", "pistol");
 
         response = given().
-//                contentType(ContentType.JSON).
+                contentType(ContentType.JSON).
                 body(map).
                 when().
                 post(endpoint);
 
-
-
         //consumer
         map.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
-        log.info("POST request is sent to the Server");
 
     }
 
@@ -150,6 +147,7 @@ public class StepDefApi2 {
         log.info("Get the Post response");
 
         response.then().
+                contentType(ContentType.JSON).
                 extract().response();
 
         successReg = response.as(SuccessReg.class);
@@ -178,7 +176,7 @@ public class StepDefApi2 {
         map.put("password", "");
 
         response = given().
-//                contentType(ContentType.JSON).
+                contentType(ContentType.JSON).
                 body(map).
                 when().
                 post(endpoint);
@@ -188,7 +186,7 @@ public class StepDefApi2 {
     public void getPostResponse() {
         log.info("Get POST response");
         response.then().log().all().
-//                contentType(ContentType.JSON).
+                contentType(ContentType.JSON).
                 extract().response();
 
         unSuccessReg = response.as(UnSuccessReg.class);
@@ -198,7 +196,9 @@ public class StepDefApi2 {
     @Then("Get post-response ContentType JSON")
     public void getPostResponseContentTypeJSON() {
         String expectedErrorMessage = "Missing password";
-        response.then().log().all().
+        response.then().
+                contentType(ContentType.JSON).
+                log().all().
                 extract().response();
 
         unSuccessReg = response.as(UnSuccessReg.class);
@@ -220,27 +220,32 @@ public class StepDefApi2 {
     @When("POST request is sent to Server: {string}")
     public void postRequestIsSentToTheServers(String endpoint) {
 
-        JSONObject jsonObject = new JSONObject();
-
-        jsonObject.put("email", "eve.holt@reqres.in");
-        jsonObject.put("password", "pistol");
+        Register user = new Register("eve.holt@reqres.in", "pistol");
 
         response = given().
-                body(jsonObject).
+                body(user).
+//                contentType(ContentType.JSON).
                 when().
                 post(endpoint);
     }
 
     @Then("Get the Post response")
     public void getThePostResponse() {
-        log.info("Get the Post response");
+        log.info("Get the POST response");
         
-        response.then().log().all().
+        response.then().
+                log().all().
                 extract().response();
         successReg = response.as(SuccessReg.class);
 
-        Assert.assertEquals(Optional.ofNullable(successReg.getId()), responseBody.getId());
-        Assert.assertEquals(successReg.getToken(), responseBody.getToken());
+        if (responseSucReg == null) {
+            throw new NullPointerException("responseSucReg is null");
+        }
+
+        Assert.assertEquals(successReg.getId(),responseSucReg.getExpectedId());
+        Assert.assertEquals(successReg.getToken(), responseSucReg.getExpectedToken());
+
+
 
     }
 

@@ -1,8 +1,3 @@
-/*create class: DbConnection based on JDBC library
-(https://stackoverflow.com/questions/74183544/get-connection-with-singleton-pattern)
-
-        DbConnection class must implement Singleton pattern.*/
-
 package com.endava.atf.transition.config.DataBase;
 
 import java.sql.Connection; // подготавливает подключение к базе

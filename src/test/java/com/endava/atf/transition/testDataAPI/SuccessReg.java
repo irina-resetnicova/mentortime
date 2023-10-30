@@ -4,10 +4,17 @@ public class SuccessReg {
 
     private Integer id;
     private String token;
+    private String email;
+    private String password;
 
     public SuccessReg(Integer id, String token) {
         this.id = id;
         this.token = token;
+    }
+
+    public SuccessReg(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
     public SuccessReg() {
@@ -35,5 +42,21 @@ public class SuccessReg {
 
     public String getToken() {
         return token;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -1,31 +1,36 @@
 package com.endava.atf.transition.testDataUI;
-import com.endava.atf.transition.drivers.DriverProvider;
-import com.endava.atf.transition.drivers.WebDriverFactory;
-import org.openqa.selenium.*;
 
+import org.openqa.selenium.*;
 
 public class RegistrationPage {
 
-    private static WebDriver webdriver;
-    static {
-        webdriver = WebDriverFactory.getDriver(DriverProvider.CHROME);
-    }
-
     private By inputFirstNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-firstname']");
+//    private By inputFirstNameLocator = By.className("firstname");
     private By inputLastNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-lastname']");
     private By inputEmailLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-email']");
     private By inputPasswordLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-password']");
     private By agreeSliderLocator = By.xpath("//*[@id='form-register']/div/div/input");
     private By inscriptionYourAccountHasBeenCreated = By.xpath("//*[@id=\"content\"]/h1");
     private By btnContinue = By.xpath("//*[@id=\"content\"]/div/a");
+
     private By btnContinueRegister = By.xpath("//*[@id=\"form-register\"]/div/button");
     private By btnContinueDropDownLocator = By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/ul/li[5]/a");
+//    private By btnContinueDropDownLocator = By.className("dropdown");
     private By dropDownLocator = By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/a/span");
-    private By logoutLocator = By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/ul/li[5]/a");
+//    private By logoutLocator = By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/ul/li[5]/a");
+    private By logoutLocator = By.className("text-end");
 
+
+
+//   <div class="text-end">
     private By alertEmailAddressIsAlreadyRegistered = By.xpath("//*[@id=\"alert\"]");
 
+    //*[@id="content"]/div/a
+    //*[@id="content"]/div/a
+
+
     //First Name must be between 1 and 32 characters!
+
     private String findByNamePattern = "//*[@id=\"error-firstname\"]";
     public By getLocatorByName(String  warningMessage){
         By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));

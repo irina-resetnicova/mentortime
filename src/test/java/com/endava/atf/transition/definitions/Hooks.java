@@ -1,15 +1,14 @@
 package com.endava.atf.transition.definitions;
-
+import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.QueryDelete;
-import com.endava.atf.transition.utils.Helper;
+import com.mysql.cj.Query;
 import io.cucumber.java.*;
 import io.restassured.RestAssured;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import java.sql.SQLException;
+import org.junit.BeforeClass;
 
+import java.sql.SQLException;
 
 public class Hooks {
     private static final Logger log = LogManager.getLogger(Hooks.class);
@@ -23,44 +22,69 @@ public class Hooks {
         }
     }
 
-    @Before
-    public void setUpLogsBefore() {
-        log.info("Test started");
-    }
+    private static int counter = 0;
 
-    @After
-    public void setUpLogsAfter() {
-        log.info("Test finished");
-    }
+    private static String currentScenarioName = null;
 
     @Before("@API")
     public void setUpApi() {
+        log.info("Test started");
         RestAssured.requestSpecification = ApiSpecifications.getRequestSpecification();
         RestAssured.responseSpecification = ApiSpecifications.getResponseSpecification();
 //        RestAssured.port = 443;
     }
 
-
     @After("@API")
-    public static void tearDown() {
-        Helper.tearDown();
+    public static void tearDownAPI() {
+        Driver.tearDown();
+        log.info("Test finished");
     }
+
+//    @BeforeClass
+//    public void cleanDB() throws SQLException {
+//            int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
+//
+//    }
+
 
 
     @Before("@UI")
     public void setUp() {
-        RestAssured.port = 8080;
-        Helper.setUpDriver();
+            log.info("Test started");
+//        RestAssured.port = 8080;
+        Driver.setUpDriver();
     }
 
     @After("@UI")
-    public static void tearDown(Scenario scenario) {
-
-        if (scenario.isFailed()) {
-            final byte[] screenshot = ((TakesScreenshot) Helper.getDriver()).getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshot, "image/png", scenario.getName());
+    public static void tearDown(){
+        log.info("Test finished");
+//        Driver.tearDown();
         }
-//        Helper.tearDown();
+
+    @Before("@DBClean")
+    public static void before_db_clean(Scenario scenario) throws SQLException {
+        // Runs before all scenarios
+        if(currentScenarioName == null)
+        {
+            currentScenarioName = scenario.getName();
+            queryDeleteAll.getPsDeleteAll().executeUpdate();
+        } else {
+            if(!currentScenarioName.equals(scenario.getName())) {
+                queryDeleteAll.getPsDeleteAll().executeUpdate();
+                currentScenarioName = scenario.getName();
+            }
+        }
+//        if(counter == 0) {
+//            queryDeleteAll.getPsDeleteAll().executeUpdate();
+//            counter++;
+//        }
+//        if(scenario.getName() == "A new User is successfully registered"){
+//            queryDeleteAll.getPsDeleteAll().executeUpdate();
+//        }
+
+    }
+
+
 
 
 //    @Before("@CleanDB")
@@ -69,7 +93,7 @@ public class Hooks {
 //
 //    }
     }
-}
+
 
 
 

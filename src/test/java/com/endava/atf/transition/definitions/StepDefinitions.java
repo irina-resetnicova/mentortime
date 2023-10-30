@@ -1,8 +1,7 @@
 package com.endava.atf.transition.definitions;
 
 import com.endava.atf.transition.config.DataBase.DbManager;
-import com.endava.atf.transition.drivers.DriverProvider;
-import com.endava.atf.transition.drivers.WebDriverFactory;
+import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.Queries;
 import com.endava.atf.transition.testDataUI.QueryDelete;
 import com.endava.atf.transition.testDataUI.RegistrationPage;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StepDefinitions {
 
     private static final Logger log = LogManager.getLogger(StepDefinitions.class);
-    private static final WebDriver webdriver;
+    private final WebDriver driver = Driver.getDriver();
     private final RegistrationPage registrationPage = new RegistrationPage();
     private static final Queries query;
     private static final QueryDelete queryDeleteAll;
@@ -59,13 +58,13 @@ public class StepDefinitions {
     }
 
 
-    WebDriver driver = WebDriverFactory.getDriver(DriverProvider.CHROME);
+//    WebDriver driver = WebDriverFactory.getDriver(DriverProvider.CHROME);
     private final DbManager dbManager;
 
-    static {
-        webdriver = WebDriverFactory.getDriver(DriverProvider.CHROME);
-
-    }
+//    static {
+//       driver = WebDriverFactory.getDriver(DriverProvider.CHROME);
+//
+//    }
 
     public StepDefinitions(DbManager dbManager) {
         this.dbManager = dbManager;
@@ -91,7 +90,7 @@ public class StepDefinitions {
 
     }
 
-    //https://www.baeldung.com/cucumber-data-tables
+
 
 
     @When("User registers")
@@ -101,10 +100,11 @@ public class StepDefinitions {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(50)); // Создание экземпляра WebDriverWait
 
         for (Map<String, String> row : rows) {
+            driver.findElement(registrationPage.getInputFirstNameLocator()).sendKeys(row.get("firstName"));
 
-
-                    WebElement inputFirstName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputFirstNameLocator()));
-                    inputFirstName.sendKeys(row.get("firstName"));
+//
+//                    WebElement inputFirstName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputFirstNameLocator()));
+//                    inputFirstName.sendKeys(row.get("firstName"));
 
                     WebElement inputLastName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputLastNameLocator()));
                     inputLastName.sendKeys(row.get("lastName"));
@@ -130,7 +130,7 @@ public class StepDefinitions {
                 }
                 }
 
-
+/////Доделать!!!!!!
     @Then("User is registered")
     public void userIsRegistered() throws SQLException {
 
@@ -158,7 +158,7 @@ public class StepDefinitions {
 
     @Then("User is relocated on the page Your Account Has Been Created!")
     public void userIsRelocatedOnThePage() {
-        Helper.openYourAccountHasBeenCreatedPage();
+//        Helper.openYourAccountHasBeenCreatedPage();
         log.info("User is relocated on the page Your Account Has Been Created!");
     }
 
@@ -179,6 +179,7 @@ public class StepDefinitions {
 
         WebElement dropdownToggle = driver.findElement(registrationPage.getDropDownLocator()); // Это элемент, который открывает выпадающее окно
         WebElement dropdownOption = driver.findElement(registrationPage.getBtnContinueDropDownLocator()); // Это элемент, который нужно выбрать
+
         Actions actions = new Actions(driver);
         actions.click(dropdownToggle).click(dropdownOption).build().perform();
 
@@ -246,7 +247,7 @@ public class StepDefinitions {
         @Then("User does not relocated onto another page")
         public void notRelocatedOntoAnotherPage () {
             String expectedURL = "http://localhost:8080/en-gb?route=account/register";
-            String currentURL = webdriver.getCurrentUrl();
+            String currentURL = driver.getCurrentUrl();
             Assert.assertEquals(expectedURL, currentURL);
 
             if (expectedURL.equals(currentURL)) {
@@ -393,7 +394,7 @@ public class StepDefinitions {
     public void userDoesNotHaveAnyACCOUNTS() throws SQLException {
 
         log.info("User does not have any ACCOUNTS");
-        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
+//        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
     }
 }
 

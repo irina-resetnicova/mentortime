@@ -1,18 +1,32 @@
 package Context;
-
-import com.endava.atf.transition.testDataAPI.UserData;
-import org.json.JSONObject;
-import org.w3c.dom.UserDataHandler;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ScenarioContext {
-    private final Map<String, Object> scenarioContext;
+//    private final Map<String, Object> scenarioContext;
+//
+//    public ScenarioContext() {
+//        scenarioContext = new HashMap<>();
+//    }
+private static ScenarioContext instance;
+    private Map<String, Object> scenarioContext;
 
     public ScenarioContext() {
+
+    }
+    private void ScenarioContext() {
         scenarioContext = new HashMap<>();
+    }
+
+    public ScenarioContext(Map<String, Object> scenarioContext) {
+        this.scenarioContext = scenarioContext;
+    }
+
+    public static ScenarioContext getInstance() {
+        if (instance == null) {
+            instance = new ScenarioContext();
+        }
+        return instance;
     }
 
     public void setContext(String key, Object value) {
@@ -26,6 +40,8 @@ public class ScenarioContext {
     public void clearContext() {
         scenarioContext.clear();
     }
+
+
 
 
 

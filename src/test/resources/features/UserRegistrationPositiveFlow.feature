@@ -1,9 +1,9 @@
 Feature: User Registration Positive Flow
 
-  @Registration@UI@CleanDB
+  @RegistrationUI @UI @DBClean
   Scenario Outline: A new User is successfully registered
     Given User is on Register page
-#    And User does not have any ACCOUNTS
+    And User does not have any ACCOUNTS
     When User registers
       | firstName   | lastName   | email   | password   |
       | <firstName> | <lastName> | <email> | <password> |
@@ -15,9 +15,9 @@ Feature: User Registration Positive Flow
       | I2                               | Petrov254                        | email@gmail.com                                                            | 123658               |
       | IrinaIrinaIrinaIrinaIrinaIrinaIr | PetrovFirst254                   | emailemail@gmail.com                                                       | 123658               |
       | Stas                             | P                                | gmailemailemail@gmail.com                                                  | 123658               |
-#      | Kris                             | PetrovPetrovPetrovPetrovPetrovPe | emailemail@gmail.com                                                       | 123658               |
+      | Kris                             | PetrovPetrovPetrovPetrovPetrovPe | emailemail@gmail.com                                                       | 123658               |
       | Irina                            | PetrovPetrovPetrovPetrovPetrov   | resetnicovaresetnicovaresetnicovaresetnicovaresetnicovaresetnico@gmail.com | 123658               |
-      | Irina                            | PetrovPetrovPetrovPetrovPetrv    | e@mail.ru                                                                  | 123658               |
+      | Olga                            | PetrovPetrovPetrovPetrovPetrv    | e@mail.ru                                                                  | 123658               |
       | Nikol                            | Petrov                           | email1@mail.ru                                                             | 123658gryjisn*+%()%# |
       | Tifany                           | Petrov                           | em@mail.ru                                                                 | 1234                 |
 
