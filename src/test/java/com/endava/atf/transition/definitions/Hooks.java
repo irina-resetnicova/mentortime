@@ -13,6 +13,8 @@ import java.sql.SQLException;
 public class Hooks {
     private static final Logger log = LogManager.getLogger(Hooks.class);
     static QueryDelete queryDeleteAll;
+    private static int counter = 0;
+
 
     static {
         try {
@@ -22,7 +24,6 @@ public class Hooks {
         }
     }
 
-    private static int counter = 0;
 
     private static String currentScenarioName = null;
 
@@ -39,14 +40,6 @@ public class Hooks {
         Driver.tearDown();
         log.info("Test finished");
     }
-
-//    @BeforeClass
-//    public void cleanDB() throws SQLException {
-//            int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
-//
-//    }
-
-
 
     @Before("@UI")
     public void setUp() {
@@ -74,22 +67,17 @@ public class Hooks {
                 currentScenarioName = scenario.getName();
             }
         }
-//        if(counter == 0) {
-//            queryDeleteAll.getPsDeleteAll().executeUpdate();
-//            counter++;
-//        }
-//        if(scenario.getName() == "A new User is successfully registered"){
-//            queryDeleteAll.getPsDeleteAll().executeUpdate();
-//        }
 
     }
-
-
-
 
 //    @Before("@CleanDB")
 //    public static void deleteAllUsers() throws SQLException {
 //        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
+//
+//    }
+//    @BeforeClass
+//    public void cleanDB() throws SQLException {
+//            int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
 //
 //    }
     }

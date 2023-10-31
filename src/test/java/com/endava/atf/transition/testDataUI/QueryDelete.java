@@ -4,9 +4,8 @@ import java.sql.*;
 
 public class QueryDelete {
     private Connection connection;
-//    private PreparedStatement psDeleteAllCustomers;
     private PreparedStatement psDeleteAll;
-
+//    private PreparedStatement psDeleteAllCustomers;
 //    public PreparedStatement getPsDeleteAllCustomers() {
 //        return psDeleteAllCustomers;
 //    }

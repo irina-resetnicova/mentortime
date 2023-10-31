@@ -14,6 +14,7 @@ import io.cucumber.java.en.When;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -38,6 +39,8 @@ public class StepDefinitions {
     private final RegistrationPage registrationPage = new RegistrationPage();
     private static final Queries query;
     private static final QueryDelete queryDeleteAll;
+    Duration timeout = Duration.ofSeconds(10);
+    Connection connection;
 
     static {
         try {
@@ -47,7 +50,7 @@ public class StepDefinitions {
         }
     }
 
-    Connection connection;
+
 
     static {
         try {
@@ -100,11 +103,9 @@ public class StepDefinitions {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(50)); // Создание экземпляра WebDriverWait
 
         for (Map<String, String> row : rows) {
-            driver.findElement(registrationPage.getInputFirstNameLocator()).sendKeys(row.get("firstName"));
 
-//
-//                    WebElement inputFirstName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputFirstNameLocator()));
-//                    inputFirstName.sendKeys(row.get("firstName"));
+                    WebElement inputFirstName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputFirstNameLocator()));
+                    inputFirstName.sendKeys(row.get("firstName"));
 
                     WebElement inputLastName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputLastNameLocator()));
                     inputLastName.sendKeys(row.get("lastName"));
@@ -165,23 +166,28 @@ public class StepDefinitions {
     @Then("The inscription {} is appeared on the screen")
     public void theInscriptionIsAppearedOnTheScreen(String string) {
 
-        Helper.openYourAccountHasBeenCreatedPage();
-        String getActualElement = driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated()).getText();
-        assertEquals(string, getActualElement);
+        Duration timeout = Duration.ofSeconds(10);
+        WebDriverWait wait = new WebDriverWait(driver, timeout);
 
-        if(string == getActualElement){
-            log.info("The strings are equals");
-        } else{
-            log.error("Step failed: The strings are not equals" );
+        WebElement getActualElement = wait.until(ExpectedConditions.visibilityOfElementLocated(registrationPage.getInscriptionYourAccountHasBeenCreated()));
+        assertEquals(string, getActualElement.getText());
 
-        }
-        driver.findElement(registrationPage.getBtnContinueLocator()).click();
+        WebElement btnContinue = wait.until(ExpectedConditions.elementToBeClickable(registrationPage.getBtnContinueLocator()));
+        btnContinue.click();
 
-        WebElement dropdownToggle = driver.findElement(registrationPage.getDropDownLocator()); // Это элемент, который открывает выпадающее окно
-        WebElement dropdownOption = driver.findElement(registrationPage.getBtnContinueDropDownLocator()); // Это элемент, который нужно выбрать
+    }
+    @And("new cycle")
+    public void newCycle() {
+        Duration timeout = Duration.ofSeconds(10);
+        WebDriverWait wait = new WebDriverWait(driver, timeout);
 
-        Actions actions = new Actions(driver);
-        actions.click(dropdownToggle).click(dropdownOption).build().perform();
+        WebElement dropdownToggle = wait.until(ExpectedConditions.visibilityOfElementLocated(registrationPage.getBtnDropDownToggleLocator()));
+        dropdownToggle.click();
+        WebElement dropdownOption = wait.until(ExpectedConditions.visibilityOfElementLocated(registrationPage.getLogoutLocator()));
+        dropdownOption.click();
+
+        WebElement btnContinueAccountLogout = wait.until(ExpectedConditions.visibilityOfElementLocated(registrationPage.getBtnContinueAccountLogout()));
+        btnContinueAccountLogout.click();
 
         try {
             Helper.openRegisterPage();
@@ -396,6 +402,8 @@ public class StepDefinitions {
         log.info("User does not have any ACCOUNTS");
 //        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
     }
+
+
 }
 
 
