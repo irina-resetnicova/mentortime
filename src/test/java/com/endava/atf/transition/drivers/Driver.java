@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.time.Duration;
+
 public class Driver {
 
     private static WebDriver driver;
@@ -43,5 +45,8 @@ public class Driver {
             driver = null; // Reset the driver instance
             log.info("WebDriver has been quit and reset.");
         }
+
+        assert driver != null;
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); // неявные  ожидания
     }
 }

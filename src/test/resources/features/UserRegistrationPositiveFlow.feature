@@ -7,10 +7,9 @@ Feature: User Registration Positive Flow
     When User registers
       | firstName   | lastName   | email   | password   |
       | <firstName> | <lastName> | <email> | <password> |
-    Then User is registered
-    And User is relocated on the page Your Account Has Been Created!
+    Then User is relocated on the page Your Account Has Been Created!
     And The inscription Your Account Has Been Created! is appeared on the screen
-    And new cycle
+    And User is registered
     Examples:
       | firstName                        | lastName                         | email                                                                      | password             |
       | I2                               | Petrov254                        | email@gmail.com                                                            | 123658               |

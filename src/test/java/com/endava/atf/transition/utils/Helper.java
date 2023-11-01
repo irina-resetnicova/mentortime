@@ -11,9 +11,7 @@ public class Helper {
         driver.get("http://localhost:8080/en-gb?route=account/register");
     }
 
-    public static void openYourAccountHasBeenCreatedPage() {
-        driver.get("http://localhost:8080/en-gb?route=account/success&customer_token");
-    }
+
 
 
 }

@@ -1,29 +1,27 @@
 package com.endava.atf.transition.definitions;
 import com.endava.atf.transition.drivers.Driver;
-import com.endava.atf.transition.testDataUI.QueryDelete;
-import com.mysql.cj.Query;
+import com.endava.atf.transition.testDataUI.Query;
 import io.cucumber.java.*;
 import io.restassured.RestAssured;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.BeforeClass;
+import org.openqa.selenium.WebDriver;
 
 import java.sql.SQLException;
 
 public class Hooks {
     private static final Logger log = LogManager.getLogger(Hooks.class);
-    static QueryDelete queryDeleteAll;
-    private static int counter = 0;
-
+    static Query queryAll;
+    private static final int counter = 0;
+    private static WebDriver driver;
 
     static {
         try {
-            queryDeleteAll = new QueryDelete();
+            queryAll = new Query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
 
     private static String currentScenarioName = null;
 
@@ -35,24 +33,23 @@ public class Hooks {
 //        RestAssured.port = 443;
     }
 
-    @After("@API")
-    public static void tearDownAPI() {
-        Driver.tearDown();
+
+    @After("@UI")
+    public void tearDown() {
         log.info("Test finished");
+        if (driver != null) {
+            driver.quit(); // Закрывает браузер
+        }
     }
 
     @Before("@UI")
-    public void setUp() {
-            log.info("Test started");
-//        RestAssured.port = 8080;
+    public void setUp(Scenario scenario) {
+        String scenarioName = scenario.getName();
+        log.info("Scenario name: " + scenarioName);
+        log.info("Test started");
         Driver.setUpDriver();
     }
 
-    @After("@UI")
-    public static void tearDown(){
-        log.info("Test finished");
-//        Driver.tearDown();
-        }
 
     @Before("@DBClean")
     public static void before_db_clean(Scenario scenario) throws SQLException {
@@ -60,10 +57,10 @@ public class Hooks {
         if(currentScenarioName == null)
         {
             currentScenarioName = scenario.getName();
-            queryDeleteAll.getPsDeleteAll().executeUpdate();
+            queryAll.getPsDeleteAll().executeUpdate();
         } else {
             if(!currentScenarioName.equals(scenario.getName())) {
-                queryDeleteAll.getPsDeleteAll().executeUpdate();
+                queryAll.getPsDeleteAll().executeUpdate();
                 currentScenarioName = scenario.getName();
             }
         }

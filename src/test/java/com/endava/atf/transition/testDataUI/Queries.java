@@ -14,6 +14,11 @@ public class Queries {
     private PreparedStatement psDeleteAll;
     private PreparedStatement psSelectAllUsers;
     private PreparedStatement psCountAll;
+    private PreparedStatement psSelectAll;
+
+    public PreparedStatement getPsSelectAll() {
+        return psSelectAll;
+    }
 
     public PreparedStatement getPsCountAll() {
         return psCountAll;
@@ -74,15 +79,17 @@ public class Queries {
             psCount = connection.prepareStatement(countUsers);
 
 
-
-            String deleteAllCustomers = "DELETE FROM oc_customer WHERE email = 'petrov@gmail.com' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = 'petrov@gmail.com');";
-            psDeleteAll = connection.prepareStatement(deleteAllCustomers);
+            String deleteAll = "DELETE FROM oc_customer WHERE email = 'petrov@gmail.com' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = 'petrov@gmail.com');";
+            psDeleteAll = connection.prepareStatement(deleteAll);
 
             String selectAllUsers ="SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'petrov@gmail.com' GROUP BY email";
             psSelectAllUsers = connection.prepareStatement(selectAllUsers);
 
             String countAllUsers ="SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email";
              psCountAll = connection.prepareStatement(countAllUsers);
+
+            String selectAllCustomers = "SELECT * FROM oc_customer";
+            psSelectAll = connection.prepareStatement(selectAllCustomers);
 
         } catch (SQLException e) {
             e.printStackTrace();
