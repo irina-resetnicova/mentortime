@@ -1,7 +1,7 @@
 package com.endava.atf.transition.definitions;
 
 import com.endava.atf.transition.drivers.Driver;
-import com.endava.atf.transition.testDataUI.Queries;
+import com.endava.atf.transition.testDataUI.UserDao;
 import com.endava.atf.transition.testDataUI.RegistrationPage;
 import com.endava.atf.transition.utils.Helper;
 import io.cucumber.datatable.DataTable;
@@ -28,18 +28,16 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions {
+    //    private final RegistrationPage registrationPage = new RegistrationPage();
     private static final Logger log = LogManager.getLogger(StepDefinitions.class);
-    private final WebDriver driver = Driver.getDriver();
-//    private final RegistrationPage registrationPage = new RegistrationPage();
-    private static final Queries query;
-    private RegistrationPage registrationPage;
+    private final WebDriver driver;
+    private final UserDao query;
+   private final RegistrationPage registrationPage;
 
-    static {
-        try {
-            query = new Queries();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public StepDefinitions(UserDao query) {
+        this.driver = Driver.getDriver();
+        this.query = query;
+        this.registrationPage = new RegistrationPage(driver);
     }
 
 
@@ -65,8 +63,7 @@ public class StepDefinitions {
 
     @When("User registers")
     public void userRegisters(DataTable table) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // Создание экземпляра WebDriverWait
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
 
         for (Map<String, String> row : rows) {
             registrationPage.fillRegistrationForm(
@@ -76,41 +73,16 @@ public class StepDefinitions {
                     row.get("password")
             );
 
-
             log.info("User registers: firstName, lastName, email, password");
             log.info("User moves slider on the rightSide");
             log.info("User presses the btn Continue");
-
         }
     }
-
-
-//
-//            WebElement inputFirstName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputFirstNameLocator()));
-//            inputFirstName.sendKeys(row.get("firstName"));
-//
-//            WebElement inputLastName = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputLastNameLocator()));
-//            inputLastName.sendKeys(row.get("lastName"));
-//
-//            WebElement inputEmail = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputEmailLocator()));
-//            inputEmail.sendKeys(row.get("email"));
-//
-//            WebElement inputPassword = wait.until(ExpectedConditions.presenceOfElementLocated(registrationPage.getInputPasswordLocator()));
-//            inputPassword.sendKeys(row.get("password"));
-//
-//            WebElement agreeSlider = driver.findElement(registrationPage.getAgreeSliderLocator());
-//            JavascriptExecutor executor = (JavascriptExecutor) driver;
-//            executor.executeScript("arguments[0].click();", agreeSlider);
-//
-//            WebElement btnContinue = driver.findElement(registrationPage.getBtnContinueRegister());
-//            btnContinue.submit();
-
-
 
     @Then("User is relocated on the page Your Account Has Been Created!")
     public void userIsRelocatedOnThePage() {
         log.info("User is relocated on the page Your Account Has Been Created!");
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         System.out.println("current page" + driver.getCurrentUrl());
         String expectedURL = "http://localhost:8080/en-gb?route=account/register";
@@ -157,7 +129,7 @@ public class StepDefinitions {
     @Then("User is registered")
     public void userIsRegistered() throws SQLException {
         log.info("User is registered");
-        ResultSet rsSelectAll = query.getPsSelectAll().executeQuery();
+        ResultSet rsSelectAll = query.getCustomerByEmail("john@gmail.com").executeQuery();
 
         try {
             while (rsSelectAll.next()) {
@@ -311,7 +283,7 @@ public class StepDefinitions {
 
     @Then("User is not registered")
     public void userIsNotRegistered() throws SQLException {
-        ResultSet rsSelect = query.getPsSelect().executeQuery();
+        ResultSet rsSelect = query.getCustomerByEmail("john@gmail.com").executeQuery();
         System.out.println("List of customers with email: " + query.getEmailValue());
 
         while (rsSelect.next()) {

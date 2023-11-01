@@ -1,7 +1,11 @@
 package com.endava.atf.transition.definitions;
+
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.Query;
-import io.cucumber.java.*;
+import io.cucumber.java.After;
+import io.cucumber.java.AfterAll;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.restassured.RestAssured;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,16 +15,21 @@ import java.sql.SQLException;
 
 public class Hooks {
     private static final Logger log = LogManager.getLogger(Hooks.class);
-    static Query queryAll;
+    private Query queryAll;
     private static final int counter = 0;
-    private static WebDriver driver;
+    private WebDriver driver;
 
-    static {
-        try {
-            queryAll = new Query();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+//    static {
+//        try {
+//            queryAll = new Query();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+
+    public Hooks(Query queryAll) {
+        this.queryAll = queryAll;
     }
 
     private static String currentScenarioName = null;
@@ -35,25 +44,31 @@ public class Hooks {
 
 
     @After("@UI")
-    public void tearDown() {
+    public void closeWebdriver() {
+        log.info("Scenario finished");
+    }
+
+    @AfterAll
+    public static void tearDown() {
         log.info("Test finished");
-        if (driver != null) {
-            driver.quit(); // Закрывает браузер
+        if (Driver.getDriver() != null) {
+//            Driver.getDriver().close(); // Закрывает tab
+            Driver.getDriver().quit(); // Закрывает браузер
         }
     }
 
     @Before("@UI")
     public void setUp(Scenario scenario) {
+        Driver.setUpDriver();
+        driver = Driver.getDriver();
         String scenarioName = scenario.getName();
         log.info("Scenario name: " + scenarioName);
         log.info("Test started");
-        Driver.setUpDriver();
     }
 
 
     @Before("@DBClean")
-    public static void before_db_clean(Scenario scenario) throws SQLException {
-        // Runs before all scenarios
+    public void before_db_clean(Scenario scenario) throws SQLException {
         if(currentScenarioName == null)
         {
             currentScenarioName = scenario.getName();

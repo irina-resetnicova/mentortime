@@ -6,9 +6,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class RegistrationPage extends BasePage {
 
-public WebDriver driver;
-
-
     private final By inputFirstNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-firstname']");
     private final By inputLastNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-lastname']");
     private final By inputEmailLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-email']");
@@ -33,17 +30,16 @@ public WebDriver driver;
     }
 
     public void fillRegistrationForm(String firstName, String lastName, String email, String password) {
-        waitForElementToBePresent(inputFirstNameLocator);
-        driver.findElement(inputFirstNameLocator).sendKeys(firstName);
 
-        waitForElementToBePresent(inputLastNameLocator);
-        driver.findElement(inputLastNameLocator).sendKeys(lastName);
+        fillField(inputFirstNameLocator, firstName);
 
-        waitForElementToBePresent(inputEmailLocator);
-        driver.findElement(inputEmailLocator).sendKeys(email);
 
-        waitForElementToBePresent(inputPasswordLocator);
-        driver.findElement(inputPasswordLocator).sendKeys(password);
+        fillField(inputLastNameLocator, lastName);
+
+
+        fillField(inputEmailLocator, email);
+
+        fillField(inputPasswordLocator, password);
 
         waitForElementToBePresent(agreeSliderLocator);
         clickWithJavascript(driver.findElement(agreeSliderLocator));
@@ -51,6 +47,7 @@ public WebDriver driver;
         waitForElementToBePresent(btnContinueRegister);
         submitElement(driver.findElement(btnContinueRegister));
     }
+
 
 
     public By getBtnContinueAccountLogout() {
@@ -118,10 +115,7 @@ public WebDriver driver;
 
 
 
-//    private final By inputFirstNameLocator = By.cssSelector("#input-firstname");
-//    private final By inputFirstNameLocator = By.xpath("//input[@id='input-firstname']");1]/div[1]/form[1]/fieldset[1]/div[1]/div[1]/input[1]']");
-//    private final By inputFirstNameLocator = By.tagName("input");
-//    private final By inputFirstNameLocator = By.xpath("//*[@id=\"input-firstname\"]");
+
 
 
 

@@ -1,13 +1,14 @@
 package com.endava.atf.transition.testDataUI;
 
+import com.endava.atf.transition.config.DataBase.DbConnection;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Queries {
+public class UserDao {
     private Connection connection;
-    private PreparedStatement psSelect;
+    //    private PreparedStatement psSelect;
     private PreparedStatement psDelete;
     private PreparedStatement psInsert;
     private PreparedStatement psCount;
@@ -36,9 +37,9 @@ public class Queries {
         return psCount;
     }
 
-    public PreparedStatement getPsSelect() {
-        return psSelect;
-    }
+//    public PreparedStatement getPsSelect() {
+//        return psSelect;
+//    }
 
     public PreparedStatement getPsDelete() {
         return psDelete;
@@ -60,12 +61,13 @@ public class Queries {
         psInsert.setString(4, passwordValue);
     }
 
-    public Queries() throws SQLException {
+    public UserDao() throws SQLException {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/opencart", "opencart", "opencart");
+//            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/opencart", "opencart", "opencart");
+            connection = DbConnection.getInstance();
 
-            String selectCustomer = "SELECT * FROM oc_customer WHERE email = 'john@gmail.com'";
-            psSelect = connection.prepareStatement(selectCustomer);
+//            String selectCustomer = "SELECT * FROM oc_customer WHERE email = 'john@gmail.com'";
+//            psSelect = connection.prepareStatement(selectCustomer);
 
             String deleteCustomer = "DELETE FROM oc_customer WHERE email = 'john@gmail.com' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = 'john@gmail.com');";
             psDelete = connection.prepareStatement(deleteCustomer);
@@ -75,28 +77,32 @@ public class Queries {
             psInsert = connection.prepareStatement(insertCustomer);
 
 //            String countUsers ="SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email HAVING user_count > 1";
-            String countUsers ="SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email";
+            String countUsers = "SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email";
             psCount = connection.prepareStatement(countUsers);
 
 
             String deleteAll = "DELETE FROM oc_customer WHERE email = 'petrov@gmail.com' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = 'petrov@gmail.com');";
             psDeleteAll = connection.prepareStatement(deleteAll);
 
-            String selectAllUsers ="SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'petrov@gmail.com' GROUP BY email";
+            String selectAllUsers = "SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'petrov@gmail.com' GROUP BY email";
             psSelectAllUsers = connection.prepareStatement(selectAllUsers);
 
-            String countAllUsers ="SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email";
-             psCountAll = connection.prepareStatement(countAllUsers);
+            String countAllUsers = "SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email";
+            psCountAll = connection.prepareStatement(countAllUsers);
 
             String selectAllCustomers = "SELECT * FROM oc_customer";
             psSelectAll = connection.prepareStatement(selectAllCustomers);
 
         } catch (SQLException e) {
             e.printStackTrace();
-
         }
-
     }
+
+    public PreparedStatement getCustomerByEmail(String email) throws SQLException {
+        String selectCustomer = String.format("SELECT * FROM oc_customer WHERE email = '%s'", email);
+        return connection.prepareStatement(selectCustomer);
+    }
+
 
     public String getFirstnameValue() {
         return firstnameValue;

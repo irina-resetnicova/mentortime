@@ -2,28 +2,25 @@ package com.endava.atf.transition.definitions;
 
 import Context.ScenarioContext;
 import com.endava.atf.transition.testDataAPI.*;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 import org.junit.Assert;
+
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
 import static io.restassured.RestAssured.given;
 
 public class StepDefApi2 {
 
-    final ScenarioContext scenarioContext;
+    private final ScenarioContext scenarioContext;
     private SuccessReg successReg;
     private UnSuccessReg unSuccessReg;
     Response response;
@@ -34,6 +31,7 @@ public class StepDefApi2 {
     public StepDefApi2(ScenarioContext scenarioContext) {
         this.scenarioContext = scenarioContext;
     }
+
     HashMap<Object, Object> map = new HashMap<Object, Object>();
 
     @Given("The base URI is set to https: {string}")
@@ -50,20 +48,25 @@ public class StepDefApi2 {
                 contentType(ContentType.JSON).
                 when().
                 get(endpoint);
+        scenarioContext.setContext("response", response);
+
     }
 
     @Then("Response code is {int}")
     public void responseCodeIs(int expectedStatusCode) {
         log.info("Response code should be 200");
+        Response response = (Response) scenarioContext.getContext("response");
         response.then().
                 log().all()
                 .assertThat()
                 .statusCode(expectedStatusCode);
+        scenarioContext.setContext("response", response);
 
     }
 
     @Then("Get response ContentType JSON")
     public void listOfUsersAppearsOnTheScreen() {
+        Response response = (Response) scenarioContext.getContext("response");
         log.info("Get response in ContentType JSON");
         response.then().
                 log().all().
@@ -127,7 +130,7 @@ public class StepDefApi2 {
     public void postRequestIsSentToTheServer(String endpoint) {
         log.info("POST request is sent to the Server");
 //         HashMap<Object, Object> map = new HashMap<Object, Object>();
-        
+
         map.put("email", "eve.holt@reqres.in");
         map.put("password", "pistol");
 
@@ -225,14 +228,14 @@ public class StepDefApi2 {
         response = given().
                 body(user).
 //                contentType(ContentType.JSON).
-                when().
+        when().
                 post(endpoint);
     }
 
     @Then("Get the Post response")
     public void getThePostResponse() {
         log.info("Get the POST response");
-        
+
         response.then().
                 log().all().
                 extract().response();
@@ -242,9 +245,8 @@ public class StepDefApi2 {
             throw new NullPointerException("responseSucReg is null");
         }
 
-        Assert.assertEquals(successReg.getId(),responseSucReg.getExpectedId());
+        Assert.assertEquals(successReg.getId(), responseSucReg.getExpectedId());
         Assert.assertEquals(successReg.getToken(), responseSucReg.getExpectedToken());
-
 
 
     }

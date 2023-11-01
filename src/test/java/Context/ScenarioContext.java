@@ -1,15 +1,13 @@
 package Context;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class ScenarioContext {
-private static ScenarioContext instance;
+    private static ScenarioContext instance;
     private Map<String, Object> scenarioContext;
 
     public ScenarioContext() {
-
-    }
-    private void ScenarioContext() {
         scenarioContext = new HashMap<>();
     }
 
@@ -37,10 +35,7 @@ private static ScenarioContext instance;
     }
 
 
-
-
-
-    }
+}
 
 
 

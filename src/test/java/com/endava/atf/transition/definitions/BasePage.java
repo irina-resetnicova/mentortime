@@ -1,5 +1,6 @@
 package com.endava.atf.transition.definitions;
 
+import Context.ScenarioContext;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -14,21 +15,34 @@ public class BasePage {
     protected WebDriver driver;
     private final WebDriverWait wait;
 
+    // инжекшн через пикоконтейнер
     public BasePage(WebDriver driver) {
         this.driver = driver;
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    protected void waitForElementToBePresent(By locator) {
+
+    public void waitForElementToBePresent(By locator) {
         wait.until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
-    protected void clickWithJavascript(WebElement element) {
+//    public void waitForElementToBePresent(WebElement element) {
+//        wait.until(ExpectedConditions.presenceOfElementLocated(element));
+//    }
+
+    public void clickWithJavascript(WebElement element) {
+
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         executor.executeScript("arguments[0].click();", element);
     }
 
-    protected void submitElement(WebElement element) {
+    public void fillField(By locator, String text) {
+        waitForElementToBePresent(locator);
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        element.sendKeys(text);
+    }
+
+    public void submitElement(WebElement element) {
         element.submit();
     }
 }

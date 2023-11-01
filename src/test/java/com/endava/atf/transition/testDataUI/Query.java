@@ -1,23 +1,27 @@
 package com.endava.atf.transition.testDataUI;
 
-import java.sql.*;
+import com.endava.atf.transition.config.DataBase.DbConnection;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class Query {
     private final PreparedStatement psDeleteAll;
-
-
 
     public PreparedStatement getPsDeleteAll() {
         return psDeleteAll;
     }
 
-    public Query() throws SQLException {
+    public Query() {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/opencart", "opencart", "opencart");
+//            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/opencart", "opencart", "opencart");
+            Connection connection = DbConnection.getInstance();
 
 
             String deleteAllCustomers = "DELETE FROM oc_customer";
-           psDeleteAll = connection.prepareStatement(deleteAllCustomers);
+            psDeleteAll = connection.prepareStatement(deleteAllCustomers);
 
 
         } catch (SQLException e) {
