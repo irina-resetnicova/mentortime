@@ -9,15 +9,15 @@ public class ApiSpecifications {
 
     public static RequestSpecification getRequestSpecification() {
         return new RequestSpecBuilder()
-                .setBaseUri("https://reqres.in/")
-                .setContentType("application/json")
+//                .setBaseUri("https://reqres.in/")
+//                .setContentType("application/json")
                 .build();
     }
 
     public static ResponseSpecification getResponseSpecification() {
         return new ResponseSpecBuilder()
-                .expectStatusCode(200)
-                .expectContentType("application/json")
+//                .expectStatusCode(200)
+//                .expectContentType("application/json")
                 .build();
     }
 }

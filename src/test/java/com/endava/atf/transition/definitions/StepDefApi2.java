@@ -34,13 +34,13 @@ public class StepDefApi2 {
 
     HashMap<Object, Object> map = new HashMap<Object, Object>();
 
-    @Given("The base URI is set to https: {string}")
+    @Given("the base URI is set to  {string}")
     public void theBaseURIIsSetToHttps(String baseURI) {
         RestAssured.baseURI = baseURI;
         log.info("The base URI is set");
     }
 
-    @When("GET request is sent to server: {string}")
+    @When("a GET request is sent to the server with the endpoint {string}")
     public void getRequestIsSentToServer(String endpoint) {
         log.info("GET request is sent to server");
         response = given().
@@ -52,21 +52,22 @@ public class StepDefApi2 {
 
     }
 
-    @Then("Response code is {int}")
+    @Then("the response code should be {}")
     public void responseCodeIs(int expectedStatusCode) {
         log.info("Response code should be 200");
         Response response = (Response) scenarioContext.getContext("response");
-        response.then().
-                log().all()
+        response.then()
+                .log().all()
                 .assertThat()
                 .statusCode(expectedStatusCode);
+
         scenarioContext.setContext("response", response);
 
     }
 
-    @Then("Get response ContentType JSON")
+    @Then("the response is retrieved and displayed on the screen")
     public void listOfUsersAppearsOnTheScreen() {
-        Response response = (Response) scenarioContext.getContext("response");
+//        Response response = (Response) scenarioContext.getContext("response");
         log.info("Get response in ContentType JSON");
         response.then().
                 log().all().
@@ -108,8 +109,8 @@ public class StepDefApi2 {
         log.info("All avatars are displayed");
 
     }
-
-    @Then("List<RESOURCE> can be sorted by years")
+//////////////////////////////////////////////////////////////////////////////////////////////////
+    @Then("the List of Resources can be sorted by years")
     public void listRESOURCECanBeSortedByYears() {
         log.info("List<RESOURCE> can be sorted by years");
 
@@ -126,7 +127,7 @@ public class StepDefApi2 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @When("POST request is sent to the Server: {string}")
+    @When("a POST request is sent to the Server with the endpoint {string}")
     public void postRequestIsSentToTheServer(String endpoint) {
         log.info("POST request is sent to the Server");
 //         HashMap<Object, Object> map = new HashMap<Object, Object>();
@@ -145,8 +146,8 @@ public class StepDefApi2 {
 
     }
 
-    @Then("Get Post response")
-    public void getPostResponseRegg() {
+    @Then("the Post response is obtained")
+    public void getPostResponseReg() {
         log.info("Get the Post response");
 
         response.then().
@@ -163,7 +164,7 @@ public class StepDefApi2 {
     }
 
 
-    @Then("result is not null")
+    @Then("the result is not null")
     public void resultIsNoNull() {
         Assert.assertNotNull(successReg.getId());
         Assert.assertNotNull(successReg.getToken());
@@ -172,7 +173,7 @@ public class StepDefApi2 {
     }
 //////////////////////////////////////////////////////////////////////////////////
 
-    @When("POST request where password is empty is sent to the Server: {string}")
+    @When("a POST request with an empty password is sent to the server with the endpoint {}")
     public void postRequestWherePasswordIsEmptyIsSentToTheServer(String endpoint) {
         log.info("POST request where password is empty is sent to the Server");
         map.put("email", "sydney@fife");
@@ -196,8 +197,8 @@ public class StepDefApi2 {
 
     }
 
-    @Then("Get post-response ContentType JSON")
-    public void getPostResponseContentTypeJSON() {
+    @Then("the Post response is obtained and displayed")
+    public void getPostResponseContentMissingPassword() {
         String expectedErrorMessage = "Missing password";
         response.then().
                 contentType(ContentType.JSON).
@@ -208,7 +209,7 @@ public class StepDefApi2 {
         Assert.assertEquals(expectedErrorMessage, unSuccessReg.getError());
     }
 
-    @Then("expected status code is {int}")
+    @Then("the expected status code should be {}")
     public void expectedStatusCodeIs(int expectedStatusCode) {
         Object actualStatusCode = response.getStatusCode();
 
@@ -232,7 +233,7 @@ public class StepDefApi2 {
                 post(endpoint);
     }
 
-    @Then("Get the Post response")
+    @Then("the Post the response is retrieved")
     public void getThePostResponse() {
         log.info("Get the POST response");
 

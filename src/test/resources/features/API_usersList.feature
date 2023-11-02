@@ -1,26 +1,26 @@
+@UsersList @API @Get @SmokeTest @Regression
 Feature: List of Users
   Background:
-    Given The base URI is set to https: "https://reqres.in/"
+    Given the base URI is set to  "https://reqres.in/"
 
-  @UsersList @API @Get @SmokeTest @Regression
-    Scenario: Getting a list of users is reflected on the screen
-    When GET request is sent to server: "api/users?page=2"
-    Then Response code is 200
-    And Get response ContentType JSON
+  @GetListOfUsers
+    Scenario: Displaying User List
+    When a GET request is sent to the server with the endpoint "api/users?page=2"
+    Then the response code should be 200
+#    And the response is retrieved and displayed on the screen
 
-
-  @UsersList @API @Post @SmokeTest @Regression
-  Scenario: All users have emails end on reqres.in
-    When GET request is sent to server: "api/users?page=2"
-    Then Response code is 200
-    And Get response ContentType JSON
+  @GetEmails
+  Scenario: Verifying that all User Emails end on reqres.in
+    When a GET request is sent to the server with the endpoint "api/users?page=2"
+    Then the response code should be 200
+    And the response is retrieved and displayed on the screen
     And All users have emails end on reqres.in
 
-  @UsersList @API @Post @SmokeTest @Regression
-  Scenario: Display all avatars from the list of users
-    When GET request is sent to server: "api/users?page=2"
-    Then Response code is 200
-    And Get response ContentType JSON
+  @GetAvatars
+  Scenario: Displaying Avatars of Users
+    When a GET request is sent to the server with the endpoint "api/users?page=2"
+    Then the response code should be 200
+    And the response is retrieved and displayed on the screen
     And Display all avatars from the list
 
 

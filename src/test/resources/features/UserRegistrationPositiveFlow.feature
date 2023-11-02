@@ -2,15 +2,15 @@
 Feature: User Registration Positive Flow
 
   @RegistrationUI @DBClean
-  Scenario Outline: A new User is successfully registered
-    Given User is on Register page
-    And User does not have any ACCOUNTS
-    When User registers
+  Scenario Outline: Successful Registration of a New User
+    Given the User is on Register page
+    And the User does not have any existing accounts
+    When the User registers with the following details:
       | firstName   | lastName   | email   | password   |
       | <firstName> | <lastName> | <email> | <password> |
-#    Then User is relocated on the page Your Account Has Been Created!
-    And The inscription Your Account Has Been Created! is appeared on the screen
-    And User is registered
+    Then the User is redirected to the page Your Account Has Been Created!
+    And the inscription Your Account Has Been Created! appears on the screen
+    And the User's registration is successful
     Examples:
       | firstName                        | lastName                         | email                                                                      | password             |
       | I2                               | Petrov254                        | email@gmail.com                                                            | 123658               |

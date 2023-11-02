@@ -1,17 +1,18 @@
+@Registration @API @SmokeTest
 Feature: User Registration API
   Background:
-    Given The base URI is set to https: "https://reqres.in/"
+    Given the base URI is set to  "https://reqres.in/"
 
-  @Registration @API @SmokeTest
-    Scenario: User can be registered successfully
-    When POST request is sent to the Server: "api/register"
-    Then Response code is 200
-    And Get Post response
-    And result is not null
+  @Example1
+    Scenario: Successful User Registration
+    When a POST request is sent to the Server with the endpoint "api/register"
+    Then the response code should be 200
+    And the Post response is obtained
+    And the result is not null
 
-  @Registration @API @SmokeTest
-  Scenario: User can be registered successfully (example 2)
-    When POST request is sent to Server: "api/register"
-    Then Response code is 200
-    And Get the Post response
+  @Example2
+  Scenario: Successful User Registration (example 2)
+    When a POST request is sent to the Server with the endpoint "api/register"
+    Then the response code should be 200
+    And the Post the response is retrieved
 

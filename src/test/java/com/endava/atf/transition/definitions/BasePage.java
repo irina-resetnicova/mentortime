@@ -20,7 +20,6 @@ public class BasePage {
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-
     public void waitForElementToBePresent(By locator) {
         wait.until(ExpectedConditions.presenceOfElementLocated(locator));
     }
@@ -35,19 +34,42 @@ public class BasePage {
         executor.executeScript("arguments[0].click();", element);
     }
 
+    //Метод fillField ожидает элемент, используя waitForElementToBePresent,
+    // затем находит элемент по By локатору и вводит текст в это поле с помощью sendKeys.
+
     public void fillField(By locator, String text) {
         waitForElementToBePresent(locator);
         WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
         element.sendKeys(text);
     }
 
-    public void submitElement(WebElement element) {
+    public void submitElement(By locator) {
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        waitForElementToBePresent(locator);
         element.submit();
     }
 
-    public void clickElement(WebElement element) {
+    public void clickElement(By locator) {
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        waitForElementToBePresent(locator);
         element.click();
     }
+
+    public String getTextOfString(By locator){
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        waitForElementToBePresent(locator);
+        return element.getText();
+
+    }
+
+    public String getTextOfMessage(By locator){
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        waitForElementToBePresent(locator);
+        return element.getText();
+
+    }
+
+
 
 
 }

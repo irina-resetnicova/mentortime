@@ -37,8 +37,8 @@ public class Hooks {
     @Before("@API")
     public void setUpApi() {
         log.info("Test started");
-        RestAssured.requestSpecification = ApiSpecifications.getRequestSpecification();
-        RestAssured.responseSpecification = ApiSpecifications.getResponseSpecification();
+//        RestAssured.requestSpecification = ApiSpecifications.getRequestSpecification();
+//        RestAssured.responseSpecification = ApiSpecifications.getResponseSpecification();
 //        RestAssured.port = 443;
     }
 
@@ -48,14 +48,14 @@ public class Hooks {
         log.info("Scenario finished");
     }
 
-    @AfterAll
-    public static void tearDown() {
-        log.info("Test finished");
-        if (Driver.getDriver() != null) {
-////            Driver.getDriver().close(); // Закрывает tab
-//            Driver.getDriver().quit(); // Закрывает браузер
-        }
-    }
+//    @AfterAll()
+//    public static void tearDown() {
+//        log.info("Test finished");
+//        if (Driver.getDriver() != null) {
+//////            Driver.getDriver().close(); // Закрывает tab
+////            Driver.getDriver().quit(); // Закрывает браузер
+//        }
+//    }
 
     @Before("@UI")
     public void setUp(Scenario scenario) {

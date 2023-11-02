@@ -33,40 +33,41 @@ public class RegistrationPage extends BasePage {
     public void fillRegistrationForm(String firstName, String lastName, String email, String password) {
 
         fillField(inputFirstNameLocator, firstName);
-
         fillField(inputLastNameLocator, lastName);
-
         fillField(inputEmailLocator, email);
-
         fillField(inputPasswordLocator, password);
 
         waitForElementToBePresent(agreeSliderLocator);
         clickWithJavascript(driver.findElement(agreeSliderLocator));
 
-        waitForElementToBePresent(btnContinueRegister);
-        submitElement(driver.findElement(btnContinueRegister));
+        submitElement(btnContinueRegister);
 
     }
+
+    public String getActualInscription() {
+        return getTextOfString(inscriptionYourAccountHasBeenCreated);
+    }
+
+    public String getActualAlert() {
+        return getTextOfMessage(alertEmailAddressIsAlreadyRegistered);
+    }
+
+
 
     public void yourAccountHasBeenCreated() {
-        waitForElementToBePresent(inscriptionYourAccountHasBeenCreated);
 
-        waitForElementToBePresent(btnContinue);
-        clickElement(driver.findElement(btnContinue));
-
-        waitForElementToBePresent(btnDropDownToggleLocator);
-        clickElement(driver.findElement(btnDropDownToggleLocator));
-
-        waitForElementToBePresent(logoutLocator);
-        clickElement(driver.findElement(logoutLocator));
-
-        waitForElementToBePresent(getBtnContinueAccountLogout());
-        clickElement(driver.findElement(getBtnContinueAccountLogout()));
-
-        String currentURL = driver.getCurrentUrl();
-        System.out.println("testtesttest  " + currentURL);
+        clickElement(btnContinue);
+        clickElement(btnDropDownToggleLocator);
+        clickElement(logoutLocator);
+        clickElement(btnContinueAccountLogout);
 
     }
+
+    public By getLocatorByName(String warningMessage) {
+        By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
+        return warningMessageLocator;
+    }
+
 
 
     public By getBtnContinueAccountLogout() {
@@ -74,56 +75,15 @@ public class RegistrationPage extends BasePage {
     }
 
 
-    public String getFindByNamePattern() {
-        return findByNamePattern;
-    }
+
 
     //First Name must be between 1 and 32 characters!
 
-    public By getLocatorByName(String warningMessage) {
-        By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
-        return warningMessageLocator;
-    }
-
-    public By getLogoutLocator() {
-        return logoutLocator;
-    }
-
-    public By getBtnDropDownToggleLocator() {
-        return btnDropDownToggleLocator;
-    }
-
-    public By getBtnContinueLocator() {
-        return btnContinue;
-    }
-
-    public By getBtnContinueRegister() {
-        return btnContinueRegister;
-    }
-
-    public By getInputFirstNameLocator() {
-        return inputFirstNameLocator;
-    }
-
-    public By getInputLastNameLocator() {
-        return inputLastNameLocator;
-    }
 
     public By getAlertEmailAddressIsAlreadyRegistered() {
         return alertEmailAddressIsAlreadyRegistered;
     }
 
-    public By getInputPasswordLocator() {
-        return inputPasswordLocator;
-    }
-
-    public By getInputEmailLocator() {
-        return inputEmailLocator;
-    }
-
-    public By getAgreeSliderLocator() {
-        return agreeSliderLocator;
-    }
 
     public By getInscriptionYourAccountHasBeenCreated() {
         return inscriptionYourAccountHasBeenCreated;

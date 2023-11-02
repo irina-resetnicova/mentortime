@@ -1,10 +1,10 @@
 Feature: User Registration API Negative flow
   Background:
-    Given The base URI is set to https: "https://reqres.in/"
+    Given the base URI is set to  "https://reqres.in/"
 
   @Registration @API @Negative
-  Scenario: User can not  be registered successfully if the field password is empty
-    When POST request where password is empty is sent to the Server: "api/register"
-    Then expected status code is 400
-    And Get post-response ContentType JSON
+  Scenario: User Cannot Be Registered Successfully with an Empty Password
+    When a POST request with an empty password is sent to the server with the endpoint "api/register"
+    Then the expected status code should be 400
+    And the Post response is obtained and displayed
 

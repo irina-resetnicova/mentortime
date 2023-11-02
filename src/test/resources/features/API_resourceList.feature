@@ -1,16 +1,17 @@
+@UsersList @API @SmokeTest @Regression
 Feature: List<RESOURCE>
   Background:
-    Given The base URI is set to https: "https://reqres.in/"
+    Given the base URI is set to  "https://reqres.in/"
 
-  @UsersList @API @SmokeTest @Regression
-Scenario: List<RESOURCE> return data
-    When GET request is sent to server: "api/unknown"
-    Then Response code is 200
-    And Get response ContentType JSON
 
-  @UsersList @API @SmokeTest @Regression
-  Scenario:  List<RESOURCE> can be sorted by years
-    When GET request is sent to server: "api/unknown"
-    Then Response code is 200
-    And Get response ContentType JSON
-    And List<RESOURCE> can be sorted by years
+Scenario: Retrieving Data from List of Resources //Scenario: List<RESOURCE> return data
+    When a GET request is sent to the server with the endpoint "api/unknown"
+    Then the response code should be 200
+    And the response is retrieved and displayed on the screen
+
+
+  Scenario: Sorting List of Resources by Years
+    When a GET request is sent to the server with the endpoint "api/unknown"
+    Then the response code should be 200
+    And the response is retrieved and displayed on the screen
+    And the List of Resources can be sorted by years
