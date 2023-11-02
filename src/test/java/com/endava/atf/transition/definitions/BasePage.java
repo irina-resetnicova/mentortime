@@ -1,6 +1,5 @@
 package com.endava.atf.transition.definitions;
 
-import Context.ScenarioContext;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -45,4 +44,10 @@ public class BasePage {
     public void submitElement(WebElement element) {
         element.submit();
     }
+
+    public void clickElement(WebElement element) {
+        element.click();
+    }
+
+
 }

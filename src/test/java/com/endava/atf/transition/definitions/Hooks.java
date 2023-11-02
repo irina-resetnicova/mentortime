@@ -52,8 +52,8 @@ public class Hooks {
     public static void tearDown() {
         log.info("Test finished");
         if (Driver.getDriver() != null) {
-//            Driver.getDriver().close(); // Закрывает tab
-            Driver.getDriver().quit(); // Закрывает браузер
+////            Driver.getDriver().close(); // Закрывает tab
+//            Driver.getDriver().quit(); // Закрывает браузер
         }
     }
 

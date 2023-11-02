@@ -1,8 +1,8 @@
 package com.endava.atf.transition.config.DataBase;
 
-import java.sql.Connection; // подготавливает подключение к базе
-import java.sql.DriverManager; //обеспечивает подключение черезJDBC drivers
-import java.sql.SQLException; //обрабатывает SQL-ошибки, возникающие при взаимодействии приложении и базы данных.
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 
 public class DbConnection {
@@ -15,9 +15,9 @@ public class DbConnection {
         final String USER = "opencart";
         final String PASS = "opencart";
 
-// read values from AppConfiguration
-
-        connection = DriverManager.getConnection(DB_URL, USER, PASS); // установливается соединение Connection с базой данных(параметры) через JDBC drivers
+        // read values from AppConfiguration
+        // установливается соединение Connection с базой данных(параметры) через JDBC drivers
+        connection = DriverManager.getConnection(DB_URL, USER, PASS);
 
         System.out.println("Connected to database");
         return connection;
@@ -37,12 +37,4 @@ public class DbConnection {
 }
 
 
-
-//JDBC driver уже есть в dependency
-//<dependency>
-//<groupId>mysql</groupId>
-//<artifactId>mysql-connector-java</artifactId>
-//<version>8.0.16</version>
-//</dependency>
-
-
+    //Одиночный экземпляр: Синглтон гарантирует, что класс имеет только один экземпляр, и этот экземпляр может быть получен из любой части программы.

@@ -1,8 +1,8 @@
 package com.endava.atf.transition.testDataUI;
 
 import com.endava.atf.transition.definitions.BasePage;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 public class RegistrationPage extends BasePage {
 
@@ -23,6 +23,7 @@ public class RegistrationPage extends BasePage {
     private final By btnContinueAccountLogout = By.xpath("/html/body/main/div[2]/div/div/div/a"); // Account Logout page
 
     private final By alertEmailAddressIsAlreadyRegistered = By.xpath("//*[@id=\"alert\"]");
+
     private final String findByNamePattern = "//*[@id=\"error-firstname\"]";
 
     public RegistrationPage(WebDriver driver) {
@@ -33,9 +34,7 @@ public class RegistrationPage extends BasePage {
 
         fillField(inputFirstNameLocator, firstName);
 
-
         fillField(inputLastNameLocator, lastName);
-
 
         fillField(inputEmailLocator, email);
 
@@ -46,8 +45,28 @@ public class RegistrationPage extends BasePage {
 
         waitForElementToBePresent(btnContinueRegister);
         submitElement(driver.findElement(btnContinueRegister));
+
     }
 
+    public void yourAccountHasBeenCreated() {
+        waitForElementToBePresent(inscriptionYourAccountHasBeenCreated);
+
+        waitForElementToBePresent(btnContinue);
+        clickElement(driver.findElement(btnContinue));
+
+        waitForElementToBePresent(btnDropDownToggleLocator);
+        clickElement(driver.findElement(btnDropDownToggleLocator));
+
+        waitForElementToBePresent(logoutLocator);
+        clickElement(driver.findElement(logoutLocator));
+
+        waitForElementToBePresent(getBtnContinueAccountLogout());
+        clickElement(driver.findElement(getBtnContinueAccountLogout()));
+
+        String currentURL = driver.getCurrentUrl();
+        System.out.println("testtesttest  " + currentURL);
+
+    }
 
 
     public By getBtnContinueAccountLogout() {
@@ -61,7 +80,7 @@ public class RegistrationPage extends BasePage {
 
     //First Name must be between 1 and 32 characters!
 
-    public By getLocatorByName(String  warningMessage){
+    public By getLocatorByName(String warningMessage) {
         By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
         return warningMessageLocator;
     }

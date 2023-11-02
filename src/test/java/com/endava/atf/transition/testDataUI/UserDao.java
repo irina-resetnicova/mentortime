@@ -8,94 +8,24 @@ import java.sql.SQLException;
 
 public class UserDao {
     private Connection connection;
-    //    private PreparedStatement psSelect;
-    private PreparedStatement psDelete;
-    private PreparedStatement psInsert;
-    private PreparedStatement psCount;
-    private PreparedStatement psDeleteAll;
-    private PreparedStatement psSelectAllUsers;
-    private PreparedStatement psCountAll;
-    private PreparedStatement psSelectAll;
 
-    public PreparedStatement getPsSelectAll() {
-        return psSelectAll;
-    }
+    public PreparedStatement insertCustomer(String firstname, String lastname, String email, String password) throws SQLException {
+        String insertCustomer = "INSERT INTO oc_customer (customer_group_id, language_id,  firstname, lastname, email,telephone, password, custom_field, ip, status, safe, token, code, date_added) " +
+                "VALUES (55, 1, ?, ?, ?, 378, ?, '', '172.19.0.1', 1, 0, 123, 123, '2023-09-29 13:36:22')";
 
-    public PreparedStatement getPsCountAll() {
-        return psCountAll;
-    }
 
-    public PreparedStatement getPsSelectAllUsers() {
-        return psSelectAllUsers;
-    }
+        PreparedStatement psInsert = connection.prepareStatement(insertCustomer);
 
-    public PreparedStatement getPsDeleteAll() {
-        return psDeleteAll;
-    }
+        psInsert.setString(1, firstname);
+        psInsert.setString(2, lastname);
+        psInsert.setString(3, email);
+        psInsert.setString(4, password);
 
-    public PreparedStatement getPsCount() {
-        return psCount;
-    }
-
-//    public PreparedStatement getPsSelect() {
-//        return psSelect;
-//    }
-
-    public PreparedStatement getPsDelete() {
-        return psDelete;
-    }
-
-    public PreparedStatement getPsInsert() {
         return psInsert;
     }
 
-    private String firstnameValue = "John";
-    private String lastnameValue = "Baiden";
-    private String emailValue = "john@gmail.com";
-    private String passwordValue = "1234";
-
-    public void setParameters() throws SQLException {
-        psInsert.setString(1, firstnameValue);
-        psInsert.setString(2, lastnameValue);
-        psInsert.setString(3, emailValue);
-        psInsert.setString(4, passwordValue);
-    }
-
-    public UserDao() throws SQLException {
-        try {
-//            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/opencart", "opencart", "opencart");
-            connection = DbConnection.getInstance();
-
-//            String selectCustomer = "SELECT * FROM oc_customer WHERE email = 'john@gmail.com'";
-//            psSelect = connection.prepareStatement(selectCustomer);
-
-            String deleteCustomer = "DELETE FROM oc_customer WHERE email = 'john@gmail.com' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = 'john@gmail.com');";
-            psDelete = connection.prepareStatement(deleteCustomer);
-
-            String insertCustomer = "INSERT INTO oc_customer (customer_group_id, language_id,  firstname, lastname, email,telephone, password, custom_field, ip, status, safe, token, code, date_added) " +
-                    "VALUES (55, 1, ?, ?, ?, 378, ?, '', '172.19.0.1', 1, 0, 123, 123, '2023-09-29 13:36:22')";
-            psInsert = connection.prepareStatement(insertCustomer);
-
-//            String countUsers ="SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email HAVING user_count > 1";
-            String countUsers = "SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email";
-            psCount = connection.prepareStatement(countUsers);
-
-
-            String deleteAll = "DELETE FROM oc_customer WHERE email = 'petrov@gmail.com' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = 'petrov@gmail.com');";
-            psDeleteAll = connection.prepareStatement(deleteAll);
-
-            String selectAllUsers = "SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'petrov@gmail.com' GROUP BY email";
-            psSelectAllUsers = connection.prepareStatement(selectAllUsers);
-
-            String countAllUsers = "SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = 'john@gmail.com' GROUP BY email";
-            psCountAll = connection.prepareStatement(countAllUsers);
-
-            String selectAllCustomers = "SELECT * FROM oc_customer";
-            psSelectAll = connection.prepareStatement(selectAllCustomers);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public UserDao() {
+        connection = DbConnection.getInstance();
     }
 
     public PreparedStatement getCustomerByEmail(String email) throws SQLException {
@@ -103,22 +33,31 @@ public class UserDao {
         return connection.prepareStatement(selectCustomer);
     }
 
-
-    public String getFirstnameValue() {
-        return firstnameValue;
+    public PreparedStatement deleteCustomerByEmail(String email) throws SQLException {
+        String deleteCustomer = String.format("DELETE FROM oc_customer WHERE email = '%s' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = '%s')", email, email);
+        return connection.prepareStatement(deleteCustomer);
     }
 
-    public String getLastnameValue() {
-        return lastnameValue;
+    public PreparedStatement countUsersByEmail(String email) throws SQLException {
+
+        String countUsers = String.format("SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = '%s' GROUP BY email", email);
+        return connection.prepareStatement(countUsers);
     }
 
-    public String getEmailValue() {
-        return emailValue;
+    public PreparedStatement deleteAllByEmail(String email) throws SQLException {
+        String deleteAllByEmail = String.format("DELETE FROM oc_customer WHERE email = '%s' AND customer_id IN (SELECT customer_id FROM oc_customer WHERE email = '%s')", email, email);
+        return connection.prepareStatement(deleteAllByEmail);
     }
 
-    public String getPasswordValue() {
-        return passwordValue;
+    public PreparedStatement selectAllUsersByEmail(String email) throws SQLException {
+        String selectAllUsers = String.format("SELECT email, COUNT(*) as user_count FROM oc_customer WHERE email = '%s' GROUP BY email", email);
+        return connection.prepareStatement(selectAllUsers);
     }
 
+    public PreparedStatement selectAllCustomers() throws SQLException {
+        String selectAll = "SELECT * FROM oc_customer";
+        return connection.prepareStatement(selectAll);
+
+    }
 
 }
