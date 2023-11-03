@@ -60,4 +60,11 @@ public class UserDao {
 
     }
 
+    public PreparedStatement deleteAllFromCustomers() throws SQLException{
+        String deleteAllCustomers = "DELETE FROM oc_customer";
+        return connection.prepareStatement(deleteAllCustomers);
+    }
+
+
+
 }

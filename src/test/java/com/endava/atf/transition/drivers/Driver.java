@@ -1,5 +1,6 @@
 package com.endava.atf.transition.drivers;
 
+import io.cucumber.java.an.E;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +35,12 @@ public class Driver {
 
     public static WebDriver getDriver() {
         if (driver == null) {
-            throw new IllegalStateException("WebDriver has not been initialized. Call setUpDriver() first.");
+            try {
+                setUpDriver();
+            }
+            catch (Exception ex){
+                throw new IllegalStateException("WebDriver has not been initialized. Call setUpDriver() first.");
+            }
         }
         return driver;
     }
@@ -46,8 +52,5 @@ public class Driver {
             driver = null; // Reset the driver instance
             log.info("WebDriver has been quit and reset.");
         }
-
-        assert driver != null;
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); // неявные  ожидания
     }
 }

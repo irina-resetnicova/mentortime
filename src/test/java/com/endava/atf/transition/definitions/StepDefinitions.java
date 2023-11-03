@@ -11,29 +11,26 @@ import io.cucumber.java.en.When;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions {
     //    private final RegistrationPage registrationPage = new RegistrationPage();
     private static final Logger log = LogManager.getLogger(StepDefinitions.class);
-    private final WebDriver driver;
     private final UserDao query;
     private final RegistrationPage registrationPage;
     private final BasePage basePage;
 
     public StepDefinitions(UserDao query) {
-        this.driver = Driver.getDriver();
         this.query = query;
-        this.registrationPage = new RegistrationPage(driver);
-        this.basePage = new BasePage(driver);
+        this.registrationPage = new RegistrationPage(Driver.getDriver());
+        this.basePage = new BasePage(Driver.getDriver());
     }
 
 
@@ -79,12 +76,12 @@ public class StepDefinitions {
     public void userIsRelocatedOnThePage() {
         log.info("User is relocated on the page Your Account Has Been Created!");
 
-        System.out.println("current page" + driver.getCurrentUrl());
+        System.out.println("current page" + Driver.getDriver().getCurrentUrl());
         String expectedURL = "http://localhost:8080/en-gb?route=account/register";
-        String currentURL = driver.getCurrentUrl();
+        String currentURL = Driver.getDriver().getCurrentUrl();
         Assert.assertEquals("The URLs are not equals", expectedURL, currentURL);
 
-            log.info("User relocated onto another page");
+        log.info("User relocated onto another page");
 
     }
 
@@ -94,7 +91,7 @@ public class StepDefinitions {
 
         String actualString = registrationPage.getActualInscription();
         assertEquals(string, actualString);
-
+        registrationPage.yourAccountHasBeenCreated();
 
         try {
             Helper.openRegisterPage();
@@ -159,6 +156,7 @@ public class StepDefinitions {
 
     @Then("the User is not registered with {}")
     public void userIsNotRegisteredWithEnteredCredential(String email) throws SQLException {
+        log.info("the user is nor registered with invalid data email");
 
         ResultSet rsSelect = query.selectAllUsersByEmail(email).executeQuery();
 
@@ -190,7 +188,7 @@ public class StepDefinitions {
     @Then("a warning message {} is displayed on the screen")
     public void aWarningMessageWarningMessageIsAppearedOnTheScreen(String warningMessage) {
         log.info("The warning message <First Name must be between 1 and 32 characters!> appears on the screen");
-        WebElement element1 = driver.findElement(registrationPage.getLocatorByName(warningMessage));
+        WebElement element1 = Driver.getDriver().findElement(registrationPage.getLocatorByName(warningMessage));
         String warningAsText1 = element1.getText();
 
         String warningAsText2 = "First Name must be between 1 and 32 characters!";
@@ -230,7 +228,7 @@ public class StepDefinitions {
     }
 
 
-    @Then("the User is not registered with the existing {}")
+    @Then("STOP! the User is not registered with the existing {}")
     public void userIsNotRegisteredWithExistingEmail(String email) throws SQLException {
         ResultSet rsSelect = query.getCustomerByEmail(email).executeQuery();
 //        System.out.println("List of customers with email: " + query.getEmailValue());
@@ -265,15 +263,12 @@ public class StepDefinitions {
 
     @Then("the User is not relocated to another page")
     public void notRelocatedOntoAnotherPage() {
-        String expectedURL = "http://localhost:8080/en-gb?route=account/register";
-        String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(expectedURL, currentURL);
+        log.info("the User is not relocated to another page");
 
-        if (expectedURL.equals(currentURL)) {
-            log.info("User does not relocated onto another page");
-        } else {
-            log.error("The URLs are not equals");
-        }
+        String expectedURL = "http://localhost:8080/en-gb?route=account/register";
+        String currentURL = Driver.getDriver().getCurrentUrl();
+        Assert.assertEquals("The URLs are equals!", expectedURL, currentURL);
+
     }
 
     @Then("an alert message {} is displayed on the screen")

@@ -26,6 +26,7 @@ public class StepDefApi2 {
     Response response;
     ResponseSuccessRegistration responseSucReg = new ResponseSuccessRegistration();
 
+
     private static final Logger log = LogManager.getLogger(StepDefinitionsAPI.class);
 
     public StepDefApi2(ScenarioContext scenarioContext) {
@@ -44,6 +45,7 @@ public class StepDefApi2 {
     public void getRequestIsSentToServer(String endpoint) {
         log.info("GET request is sent to server");
         response = given().
+                log().all().
                 header("Accept", "application/json").
                 contentType(ContentType.JSON).
                 when().
@@ -57,7 +59,7 @@ public class StepDefApi2 {
         log.info("Response code should be 200");
         Response response = (Response) scenarioContext.getContext("response");
         response.then()
-                .log().all()
+                .log().status()
                 .assertThat()
                 .statusCode(expectedStatusCode);
 
@@ -67,19 +69,20 @@ public class StepDefApi2 {
 
     @Then("the response is retrieved and displayed on the screen")
     public void listOfUsersAppearsOnTheScreen() {
-//        Response response = (Response) scenarioContext.getContext("response");
+        Response response = (Response) scenarioContext.getContext("response");
         log.info("Get response in ContentType JSON");
         response.then().
-                log().all().
+                log().body().
                 contentType(ContentType.JSON).
                 extract().response();
 
+        scenarioContext.setContext("response", response);
     }
 
-    @Then("All users have emails end on reqres.in")
+    @Then("all users have emails end on reqres.in")
     public void allUsersHaveEmailsEnsdOnReqresIn() {
         log.info("All users have emails end on reqres.in");
-
+        Response response = (Response) scenarioContext.getContext("response");
         List<UserData> users = response.getBody().jsonPath().getList("data", UserData.class);
 
         for (UserData user : users) {
@@ -93,12 +96,14 @@ public class StepDefApi2 {
         }
 
         Assert.assertTrue(users.stream().allMatch(x -> x.getEmail().endsWith("reqres.in")));
+        scenarioContext.setContext("response", response);
 
     }
 
-    @Then("Display all avatars from the list")
+    @Then("all avatars are displaying on the screen from the list")
     public void displayAllAvatarsFromTheList() {
         log.info("All avatars are displayed");
+        Response response = (Response) scenarioContext.getContext("response");
         List<UserData> users = response.getBody().jsonPath().getList("data", UserData.class);
         List<String> avatars = users.stream().map(UserData::getAvatar).collect(Collectors.toList());
 
@@ -107,17 +112,20 @@ public class StepDefApi2 {
         }
 
         log.info("All avatars are displayed");
-
+        scenarioContext.setContext("response", response);
     }
-//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     @Then("the List of Resources can be sorted by years")
     public void listRESOURCECanBeSortedByYears() {
         log.info("List<RESOURCE> can be sorted by years");
+        Response response = (Response) scenarioContext.getContext("response");
 
         List<ColorsData> colors = response.getBody().jsonPath().getList("data", ColorsData.class);
 
         List<Integer> years = colors.stream().map(ColorsData::getYear).collect(Collectors.toList());
         List<Integer> sortedYears = years.stream().sorted().collect(Collectors.toList());
+        scenarioContext.setContext("response", response);
 
         Assert.assertEquals(sortedYears, years);
         System.out.println(years);
@@ -130,6 +138,7 @@ public class StepDefApi2 {
     @When("a POST request is sent to the Server with the endpoint {string}")
     public void postRequestIsSentToTheServer(String endpoint) {
         log.info("POST request is sent to the Server");
+
 //         HashMap<Object, Object> map = new HashMap<Object, Object>();
 
         map.put("email", "eve.holt@reqres.in");
@@ -143,12 +152,13 @@ public class StepDefApi2 {
 
         //consumer
         map.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
-
+        scenarioContext.setContext("response", response);
     }
 
     @Then("the Post response is obtained")
     public void getPostResponseReg() {
         log.info("Get the Post response");
+        Response response = (Response) scenarioContext.getContext("response");
 
         response.then().
                 contentType(ContentType.JSON).
@@ -161,19 +171,22 @@ public class StepDefApi2 {
 
         Assert.assertEquals(successReg.getId(), expectedId);
         Assert.assertEquals(successReg.getToken(), expectedToken);
+        scenarioContext.setContext("response", response);
     }
 
 
     @Then("the result is not null")
     public void resultIsNoNull() {
+        Response response = (Response) scenarioContext.getContext("response");
         Assert.assertNotNull(successReg.getId());
         Assert.assertNotNull(successReg.getToken());
 
         log.info("Check that result is not null");
+        scenarioContext.setContext("response", response);
     }
 //////////////////////////////////////////////////////////////////////////////////
 
-    @When("a POST request with an empty password is sent to the server with the endpoint {}")
+    @When("a POST request with an empty password is sent to the server with the endpoint {string}")
     public void postRequestWherePasswordIsEmptyIsSentToTheServer(String endpoint) {
         log.info("POST request where password is empty is sent to the Server");
         map.put("email", "sydney@fife");
@@ -184,21 +197,25 @@ public class StepDefApi2 {
                 body(map).
                 when().
                 post(endpoint);
+        scenarioContext.setContext("response", response);
     }
 
     @Then("get Post response")
     public void getPostResponse() {
         log.info("Get POST response");
+        Response response = (Response) scenarioContext.getContext("response");
         response.then().log().all().
                 contentType(ContentType.JSON).
                 extract().response();
 
         unSuccessReg = response.as(UnSuccessReg.class);
+        scenarioContext.setContext("response", response);
 
     }
 
     @Then("the Post response is obtained and displayed")
     public void getPostResponseContentMissingPassword() {
+        Response response = (Response) scenarioContext.getContext("response");
         String expectedErrorMessage = "Missing password";
         response.then().
                 contentType(ContentType.JSON).
@@ -207,10 +224,12 @@ public class StepDefApi2 {
 
         unSuccessReg = response.as(UnSuccessReg.class);
         Assert.assertEquals(expectedErrorMessage, unSuccessReg.getError());
+        scenarioContext.setContext("response", response);
     }
 
     @Then("the expected status code should be {}")
     public void expectedStatusCodeIs(int expectedStatusCode) {
+        Response response = (Response) scenarioContext.getContext("response");
         Object actualStatusCode = response.getStatusCode();
 
         System.out.println("actual status code is: " + actualStatusCode);
@@ -218,6 +237,7 @@ public class StepDefApi2 {
         Assert.assertEquals(expectedStatusCode, actualStatusCode);
 
         log.info("status code is 400");
+        scenarioContext.setContext("response", response);
     }
 
 
@@ -228,27 +248,32 @@ public class StepDefApi2 {
 
         response = given().
                 body(user).
-//                contentType(ContentType.JSON).
-        when().
+                contentType(ContentType.JSON).
+                when().
                 post(endpoint);
+        scenarioContext.setContext("response", response);
+
     }
 
     @Then("the Post the response is retrieved")
     public void getThePostResponse() {
+        Response response = (Response) scenarioContext.getContext("response");
         log.info("Get the POST response");
 
         response.then().
                 log().all().
                 extract().response();
-        successReg = response.as(SuccessReg.class);
 
-        if (responseSucReg == null) {
+
+        if (responseSucReg != null) {
+
             throw new NullPointerException("responseSucReg is null");
         }
 
+
         Assert.assertEquals(successReg.getId(), responseSucReg.getExpectedId());
         Assert.assertEquals(successReg.getToken(), responseSucReg.getExpectedToken());
-
+        scenarioContext.setContext("response", response);
 
     }
 

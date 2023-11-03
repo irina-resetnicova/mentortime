@@ -14,7 +14,7 @@ Feature: User Registration Positive Flow
     Examples:
       | firstName                        | lastName                         | email                                                                      | password             |
       | I2                               | Petrov254                        | email@gmail.com                                                            | 123658               |
-#      | IrinaIrinaIrinaIrinaIrinaIrinaIr | PetrovFirst254                   | emailemail@gmail.com                                                       | 123658               |
+      | IrinaIrinaIrinaIrinaIrinaIrinaIr | PetrovFirst254                   | emailemail@gmail.com                                                       | 123658               |
 #      | Stas                             | P                                | gmailemailemail@gmail.com                                                  | 123658               |
 #      | Kris                             | PetrovPetrovPetrovPetrovPetrovPe | emailemaill@gmail.com                                                      | 123658               |
 #      | Irina                            | PetrovPetrovPetrovPetrovPetrov   | resetnicovaresetnicovaresetnicovaresetnicovaresetnicovaresetnico@gmail.com | 123658               |

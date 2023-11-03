@@ -20,7 +20,7 @@ Feature: User Registration Negative Flow
     Given the User is on Register page
     And the User already has an account
     When the User tries to register with an existing account <firstName>, <lastName>, <email>, <password>
-    Then the User is not registered with the existing <email>
+    Then STOP! the User is not registered with the existing <email>
     And the User is not relocated to another page
     And an alert message Warning: E-Mail Address is already registered! is displayed on the screen
     Examples:
