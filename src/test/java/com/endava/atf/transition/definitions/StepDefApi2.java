@@ -145,6 +145,7 @@ public class StepDefApi2 {
         map.put("password", "pistol");
 
         response = given().
+                log().all().
                 contentType(ContentType.JSON).
                 body(map).
                 when().
@@ -161,6 +162,7 @@ public class StepDefApi2 {
         Response response = (Response) scenarioContext.getContext("response");
 
         response.then().
+                log().body().
                 contentType(ContentType.JSON).
                 extract().response();
 
@@ -193,6 +195,7 @@ public class StepDefApi2 {
         map.put("password", "");
 
         response = given().
+                log().body().
                 contentType(ContentType.JSON).
                 body(map).
                 when().
@@ -261,7 +264,7 @@ public class StepDefApi2 {
         log.info("Get the POST response");
 
         response.then().
-                log().all().
+                log().body().
                 extract().response();
 
 

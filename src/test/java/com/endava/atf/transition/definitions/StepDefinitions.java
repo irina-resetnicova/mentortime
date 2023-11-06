@@ -3,7 +3,7 @@ package com.endava.atf.transition.definitions;
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.RegistrationPage;
 import com.endava.atf.transition.testDataUI.UserDao;
-import com.endava.atf.transition.utils.Helper;
+import Context.utils.Helper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.openqa.selenium.WebElement;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions {
-    //    private final RegistrationPage registrationPage = new RegistrationPage();
+
     private static final Logger log = LogManager.getLogger(StepDefinitions.class);
     private final UserDao query;
     private final RegistrationPage registrationPage;

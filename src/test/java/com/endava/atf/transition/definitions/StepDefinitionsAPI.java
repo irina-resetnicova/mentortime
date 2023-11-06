@@ -11,8 +11,6 @@ import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-
-
 import java.util.HashMap;
 import static io.restassured.RestAssured.given;
 

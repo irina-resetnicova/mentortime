@@ -9,6 +9,9 @@ public class DbConnection {
 
     private static Connection connection = null;
 
+    private DbConnection() {
+    }
+
     // инициализируем connection
     private static Connection initialization() throws SQLException, ClassNotFoundException {
         final String DB_URL = "jdbc:mysql://localhost:3306/opencart";

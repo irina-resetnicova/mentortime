@@ -1,9 +1,6 @@
 package com.endava.atf.transition.definitions;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -21,15 +18,16 @@ public class BasePage {
     }
 
     public void waitForElementToBePresent(By locator) {
-        wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        try{
+            wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        } catch (TimeoutException e) {
+            System.err.println("the time is up: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("the exception: " + e.getMessage());
+        }
     }
 
-//    public void waitForElementToBePresent(WebElement element) {
-//        wait.until(ExpectedConditions.presenceOfElementLocated(element));
-//    }
-
     public void clickWithJavascript(WebElement element) {
-
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         executor.executeScript("arguments[0].click();", element);
     }
@@ -38,38 +36,34 @@ public class BasePage {
     // затем находит элемент по By локатору и вводит текст в это поле с помощью sendKeys.
 
     public void fillField(By locator, String text) {
-        waitForElementToBePresent(locator);
+//        waitForElementToBePresent(locator);
         WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
         element.sendKeys(text);
     }
 
     public void submitElement(By locator) {
         WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-        waitForElementToBePresent(locator);
+//        waitForElementToBePresent(locator);
         element.submit();
     }
 
     public void clickElement(By locator) {
         WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-        waitForElementToBePresent(locator);
+//        waitForElementToBePresent(locator);
         element.click();
     }
 
-    public String getTextOfString(By locator){
+    public String getTextOfString(By locator) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        waitForElementToBePresent(locator);
+//        waitForElementToBePresent(locator);
+        return element.getText();
+    }
+
+    public String getTextOfMessage(By locator) {
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+//        waitForElementToBePresent(locator);
         return element.getText();
 
     }
-
-    public String getTextOfMessage(By locator){
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        waitForElementToBePresent(locator);
-        return element.getText();
-
-    }
-
-
-
 
 }

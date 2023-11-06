@@ -31,7 +31,6 @@ public class RegistrationPage extends BasePage {
     }
 
     public void fillRegistrationForm(String firstName, String lastName, String email, String password) {
-
         fillField(inputFirstNameLocator, firstName);
         fillField(inputLastNameLocator, lastName);
         fillField(inputEmailLocator, email);
@@ -41,7 +40,6 @@ public class RegistrationPage extends BasePage {
         clickWithJavascript(driver.findElement(agreeSliderLocator));
 
         submitElement(btnContinueRegister);
-
     }
 
     public String getActualInscription() {
@@ -52,43 +50,17 @@ public class RegistrationPage extends BasePage {
         return getTextOfMessage(alertEmailAddressIsAlreadyRegistered);
     }
 
-
-
     public void yourAccountHasBeenCreated() {
-
         clickElement(btnContinue);
         clickElement(btnDropDownToggleLocator);
         clickElement(logoutLocator);
         clickElement(btnContinueAccountLogout);
-
     }
 
     public By getLocatorByName(String warningMessage) {
         By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
         return warningMessageLocator;
     }
-
-
-
-    public By getBtnContinueAccountLogout() {
-        return btnContinueAccountLogout;
-    }
-
-
-
-
-    //First Name must be between 1 and 32 characters!
-
-
-    public By getAlertEmailAddressIsAlreadyRegistered() {
-        return alertEmailAddressIsAlreadyRegistered;
-    }
-
-
-    public By getInscriptionYourAccountHasBeenCreated() {
-        return inscriptionYourAccountHasBeenCreated;
-    }
-
 
 }
 

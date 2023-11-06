@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScenarioContext {
+
     private static ScenarioContext instance;
     private Map<String, Object> scenarioContext;
 
-    public ScenarioContext() {
+    private ScenarioContext() {
         scenarioContext = new HashMap<>();
     }
 

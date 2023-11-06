@@ -3,19 +3,14 @@ package com.endava.atf.transition.definitions;
 import Context.ScenarioContext;
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.UserDao;
-import com.endava.atf.transition.utils.Helper;
+import Context.utils.Helper;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import io.restassured.RestAssured;
-import io.restassured.config.MultiPartConfig;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.specification.RequestSpecification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
