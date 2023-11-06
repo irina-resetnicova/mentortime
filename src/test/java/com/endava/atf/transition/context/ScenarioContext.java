@@ -1,20 +1,19 @@
-package Context;
+package com.endava.atf.transition.context;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ScenarioContext {
-
     private static ScenarioContext instance;
     private Map<String, Object> scenarioContext;
 
-    private ScenarioContext() {
+    public ScenarioContext() {
         scenarioContext = new HashMap<>();
     }
 
-    public ScenarioContext(Map<String, Object> scenarioContext) {
-        this.scenarioContext = scenarioContext;
-    }
+//    public ScenarioContext(Map<String, Object> scenarioContext) {
+//        this.scenarioContext = scenarioContext;
+//    }
 
     public static ScenarioContext getInstance() {
         if (instance == null) {
@@ -37,6 +36,4 @@ public class ScenarioContext {
 
 
 }
-
-
 

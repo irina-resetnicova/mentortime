@@ -1,7 +1,6 @@
 package com.endava.atf.transition.testDataUI;
 
 import com.endava.atf.transition.config.DataBase.DbConnection;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,6 +21,8 @@ public class UserDao {
             psInsert.setString(3, email);
             psInsert.setString(4, password);
 
+
+
             return psInsert;
 
     }
@@ -33,6 +34,7 @@ public class UserDao {
     public PreparedStatement getCustomerByEmail(String email) throws SQLException {
             String selectCustomer = String.format("SELECT * FROM oc_customer WHERE email = '%s'", email);
             return connection.prepareStatement(selectCustomer);
+
     }
 
     public PreparedStatement deleteCustomerByEmail(String email) throws SQLException {

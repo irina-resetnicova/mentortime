@@ -1,6 +1,6 @@
 package com.endava.atf.transition.definitions;
 
-import Context.ScenarioContext;
+import com.endava.atf.transition.context.ScenarioContext;
 import com.endava.atf.transition.testDataUI.MethodsUI;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

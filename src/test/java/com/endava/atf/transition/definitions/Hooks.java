@@ -1,9 +1,10 @@
 package com.endava.atf.transition.definitions;
 
-import Context.ScenarioContext;
+import com.endava.atf.transition.config.DataBase.DbConnection;
+import com.endava.atf.transition.context.ScenarioContext;
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.UserDao;
-import Context.utils.Helper;
+import com.endava.atf.transition.utils.Helper;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
@@ -28,7 +29,9 @@ public class Hooks {
     private static String currentScenarioName = null;
 
     @Before("@API")
-    public void setUpApi() {
+    public void setUpApi(Scenario scenario) {
+        String scenarioName = scenario.getName();
+        System.out.println("\u001B[32mSCENARIO: " + scenarioName + "\u001B[0m");
         log.info("Test started");
         scenarioContext.clearContext();
         ApiSpecifications.getRequestSpecification();
@@ -41,11 +44,8 @@ public class Hooks {
     public void setUp(Scenario scenario) {
         String scenarioName = scenario.getName();
         System.out.println("\u001B[32mSCENARIO: " + scenarioName + "\u001B[0m");
-        // log.info("Scenario name: " + scenarioName);
         Helper.setDriver(Driver.getDriver());
-
         scenarioContext.clearContext();
-
         log.info("Test started");
     }
 
@@ -69,6 +69,7 @@ public class Hooks {
     public void closeWebdriver() {
         log.info("Scenario finished");
 
+
     }
 
     @AfterAll
@@ -77,6 +78,10 @@ public class Hooks {
         if (Driver.getDriver() != null) {
             Driver.tearDown(); // Закрывает браузер
         }
+        DbConnection.closeConnection();
+        ScenarioContext sc = ScenarioContext.getInstance();
+        sc.clearContext();
+
     }
 }
 

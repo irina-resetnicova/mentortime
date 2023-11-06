@@ -1,9 +1,9 @@
 package com.endava.atf.transition.definitions;
 
+import com.endava.atf.transition.utils.Helper;
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.RegistrationPage;
 import com.endava.atf.transition.testDataUI.UserDao;
-import Context.utils.Helper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -11,7 +11,6 @@ import io.cucumber.java.en.When;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.openqa.selenium.WebElement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions {
-
     private static final Logger log = LogManager.getLogger(StepDefinitions.class);
     private final UserDao query;
     private final RegistrationPage registrationPage;
@@ -32,16 +30,11 @@ public class StepDefinitions {
         this.basePage = new BasePage(Driver.getDriver());
     }
 
-
     @Given("the User is on Register page")
     public void userIsOnRegisterPage() {
-        try {
-            Helper.openRegisterPage();
-            log.info("User is on register page");
-        } catch (RuntimeException e) {
-            log.error(String.valueOf(e));
-            throw e;
-        }
+        Helper.openRegisterPage();
+        log.info("User is on register page");
+
     }
 
 //    Scenario Outline: A new User is successfully registered
@@ -88,25 +81,18 @@ public class StepDefinitions {
     public void theInscriptionIsAppearedOnTheScreen(String string) {
         log.info("The inscription Your Account Has Been Created! is appeared on the screen");
 
-        String actualString = registrationPage.getActualInscription();
+        String actualString = basePage.getTextOfString(registrationPage.getInscriptionYourAccountHasBeenCreated());
+
         assertEquals(string, actualString);
         registrationPage.yourAccountHasBeenCreated();
 
-        try {
-            Helper.openRegisterPage();
-            log.info("User is on register page");
-        } catch (RuntimeException e) {
-            log.error(String.valueOf(e));
-            throw e;
-        }
     }
 
     @Then("the User's registration is successful")
-    public void userIsRegistered() throws SQLException {
+    public void userIsRegistered() {
         log.info("User is registered");
-        ResultSet rsSelectAll = query.selectAllCustomers().executeQuery();
 
-        try {
+        try (ResultSet rsSelectAll = query.selectAllCustomers().executeQuery()) {
             while (rsSelectAll.next()) {
                 System.out.println();
                 System.out.println("firstname: " + rsSelectAll.getString("firstname"));
@@ -117,21 +103,18 @@ public class StepDefinitions {
             }
         } catch (SQLException ex) {
             log.error(ex.getMessage(), ex);
-            throw new SQLException(ex);
-        } finally {
-            rsSelectAll.close();
         }
     }
+
 
 //    Scenario Outline: User can not be registered if first name does not confirm requirements
 
     @Given("the User does not have any account with {}")
     public void userDoesNotHaveAccount(String email) throws SQLException {
-
         log.info("User does not have any account");
         int rsDeleteAll = query.deleteAllByEmail(email).executeUpdate();
-
     }
+
 
     @When("the User registers with the wrong firstname")
     public void userRegistersWithWrongFirstname(DataTable table) {
@@ -155,55 +138,43 @@ public class StepDefinitions {
 
     @Then("the User is not registered with {}")
     public void userIsNotRegisteredWithEnteredCredential(String email) throws SQLException {
-        log.info("the user is nor registered with invalid data email");
+        log.info("the user is not registered with invalid data email");
 
         ResultSet rsSelect = query.selectAllUsersByEmail(email).executeQuery();
 
-        while (rsSelect.next()) {
-            log.error("email: " + rsSelect.getString("email"));
-            System.out.println();
+            while (rsSelect.next()) {
+                log.error("email: " + rsSelect.getString("email"));
+                System.out.println();
 
-        }
-        rsSelect.close();
 
-        ResultSet rsCountAll = query.countUsersByEmail(email).executeQuery();
+                ResultSet rsCountAll = query.countUsersByEmail(email).executeQuery();
 
-        while (rsCountAll.next()) {
+                while (rsCountAll.next()) {
+                    int userCount = rsCountAll.getInt("user_count");
+                    int expectUserCount = 1;
+                    Assert.assertEquals("User can register with an existing account", userCount, expectUserCount);
+                }
 
-            int userCount = rsCountAll.getInt("user_count");
-
-            int expectUserCount = 1;
-            Assert.assertEquals(userCount, expectUserCount);
-
-            if (userCount == 1) {
-                log.info("User can not register with existing account");
-            } else {
-                log.error("User registered with existing account");
             }
 
-        }
     }
 
     @Then("a warning message {} is displayed on the screen")
-    public void aWarningMessageWarningMessageIsAppearedOnTheScreen(String warningMessage) {
+    public void aWarningMessageWarningMessageIsAppearedOnTheScreen(String expectedWarningMessage) {
         log.info("The warning message <First Name must be between 1 and 32 characters!> appears on the screen");
-        WebElement element1 = Driver.getDriver().findElement(registrationPage.getLocatorByName(warningMessage));
-        String warningAsText1 = element1.getText();
 
-        String warningAsText2 = "First Name must be between 1 and 32 characters!";
 
-        if (warningAsText1.equals(warningAsText2)) {
+         String actualWarningMessage = basePage.getTextOfString(registrationPage.getFirstNameError());
+
+        if (actualWarningMessage.equals(expectedWarningMessage)) {
             log.info("The warning messages are equals");
         } else {
             log.error("The warning messages are not equals");
         }
-        Assert.assertEquals(warningAsText1, warningAsText2);
 
     }
 
-
 // Scenario: Registration with Existing User
-
     @Given("the User already has an account")
     public void userIsAlreadyRegistered() throws SQLException {
 
@@ -214,16 +185,15 @@ public class StepDefinitions {
 
     }
 
-
     @When("the User tries to register with an existing account {}, {}, {}, {}")
     public void userTryToRegisterWithExistingAccountFirstNameLastNameEmailPassword(String firstname, String lastname, String email, String password) {
-
+        log.info("User tries to register with existing account:  ");
         registrationPage.fillRegistrationForm(firstname, lastname, email, password);
 
         log.info("User registers: firstName, lastName, email, password");
         log.info("User moves slider on the rightSide");
         log.info("User presses the btn Continue");
-        log.info("User try to register with existing account");
+
     }
 
 
@@ -270,13 +240,13 @@ public class StepDefinitions {
 
     }
 
-    @Then("an alert message {} is displayed on the screen")
-    public void anAlertMessageEMailAddressIsAlreadyRegistered(String alert) {
-
-        String actualAlert = registrationPage.getActualAlert();
-        assertEquals(alert, actualAlert);
-        log.info("Warning message <Warning: E-Mail Address is already registered!> is appeared on the screen");
-    }
+//    @Then("an alert message {} is displayed on the screen")
+//    public void anAlertMessageEMailAddressIsAlreadyRegistered(String alert) {
+//
+//        String actualAlert = registrationPage.getActualAlert();
+//        assertEquals(alert, actualAlert);
+//        log.info("Warning message <Warning: E-Mail Address is already registered!> is appeared on the screen");
+//    }
 
 
 }

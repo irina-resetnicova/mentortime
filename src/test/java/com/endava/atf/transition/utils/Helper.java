@@ -1,4 +1,4 @@
-package Context.utils;
+package com.endava.atf.transition.utils;
 
 import org.openqa.selenium.WebDriver;
 

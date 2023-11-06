@@ -1,6 +1,13 @@
 package com.endava.atf.transition.definitions;
 
-import org.openqa.selenium.*;
+import org.apache.commons.io.function.IOStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -10,60 +17,106 @@ public class BasePage {
 
     protected WebDriver driver;
     private final WebDriverWait wait;
+    private static final Logger log = LogManager.getLogger(BasePage.class);
 
     // инжекшн через пикоконтейнер
     public BasePage(WebDriver driver) {
         this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        PageFactory.initElements(driver, this);
     }
 
-    public void waitForElementToBePresent(By locator) {
-        try{
-            wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+
+    public void waitForElementToBePresent(WebElement element) {
+        try {
+            wait.until(ExpectedConditions.visibilityOf(element));
         } catch (TimeoutException e) {
-            System.err.println("the time is up: " + e.getMessage());
+            log.error("the time is up: " + e.getMessage());
+            throw e;
         } catch (Exception e) {
-            System.err.println("the exception: " + e.getMessage());
+            log.error("the exception: " + e.getMessage());
+            throw e;
         }
     }
 
     public void clickWithJavascript(WebElement element) {
+        try{
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         executor.executeScript("arguments[0].click();", element);
+    }catch (TimeoutException e) {
+            log.error("the time is up: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("the exception: " + e.getMessage());
+            throw e;
+        }
     }
 
-    //Метод fillField ожидает элемент, используя waitForElementToBePresent,
-    // затем находит элемент по By локатору и вводит текст в это поле с помощью sendKeys.
-
-    public void fillField(By locator, String text) {
-//        waitForElementToBePresent(locator);
-        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-        element.sendKeys(text);
+    public void fillField(WebElement element, String text) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.visibilityOf(element)).sendKeys(text);
+        } catch (TimeoutException e) {
+            log.error("the time is up: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("the exception: " + e.getMessage());
+            throw e;
+        }
     }
 
-    public void submitElement(By locator) {
-        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-//        waitForElementToBePresent(locator);
-        element.submit();
-    }
-
-    public void clickElement(By locator) {
-        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-//        waitForElementToBePresent(locator);
-        element.click();
-    }
-
-    public String getTextOfString(By locator) {
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-//        waitForElementToBePresent(locator);
-        return element.getText();
-    }
-
-    public String getTextOfMessage(By locator) {
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-//        waitForElementToBePresent(locator);
-        return element.getText();
+    public void submitElement(WebElement element) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement visibleElement = wait.until(ExpectedConditions.visibilityOf(element));
+            if (visibleElement != null) {
+                visibleElement.submit();
+            }
+        } catch (TimeoutException e) {
+            log.error("the time is up: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("the exception: " + e.getMessage());
+            throw e;
+        }
 
     }
 
-}
+
+    public void clickElement(WebElement element) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement visibleElement = wait.until(ExpectedConditions.elementToBeClickable(element));
+            if (visibleElement != null) {
+                visibleElement.click();
+            }
+        } catch (TimeoutException e) {
+            log.error("the time is up: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("the exception: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public String getTextOfString(WebElement element) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.visibilityOf(element));
+
+            return element.getText();
+
+        } catch (TimeoutException e) {
+            log.error("the time is up: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("the exception: " + e.getMessage());
+            throw e;
+        }
+        }
+    }
+
+
+
+
+

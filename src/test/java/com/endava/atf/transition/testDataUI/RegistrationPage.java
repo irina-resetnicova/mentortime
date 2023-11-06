@@ -1,35 +1,59 @@
 package com.endava.atf.transition.testDataUI;
 
 import com.endava.atf.transition.definitions.BasePage;
+import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class RegistrationPage extends BasePage {
 
-    private final By inputFirstNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-firstname']");
-    private final By inputLastNameLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-lastname']");
-    private final By inputEmailLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-email']");
-    private final By inputPasswordLocator = By.xpath("//div[@class = 'col-sm-10']//input[@id ='input-password']");
-    private final By agreeSliderLocator = By.xpath("//*[@id='form-register']/div/div/input");
-    private final By btnContinueRegister = By.xpath("//*[@id=\"form-register\"]/div/button");  //  Register page
+    @FindBy(xpath = ("//div[@class = 'col-sm-10']//input[@id ='input-firstname']"))
+    public WebElement inputFirstNameLocator;
 
-    private final By inscriptionYourAccountHasBeenCreated = By.xpath("//h1[text()='Your Account Has Been Created!']");
+    @FindBy(xpath = ("//div[@class = 'col-sm-10']//input[@id ='input-lastname']"))
+    public WebElement inputLastNameLocator;
 
-    private final By btnContinue = By.xpath("//*[@id=\"content\"]/div/a"); //  YourAccountHasBeenCreated page
+    @FindBy(xpath = ("//div[@class = 'col-sm-10']//input[@id ='input-email']"))
+    public WebElement inputEmailLocator;
 
-    private final By btnDropDownToggleLocator = By.xpath("/html/body/nav/div/div[2]/ul/li[2]/div/a/span"); // dropdown "My Account"
-    private final By logoutLocator = By.xpath("/html/body/nav/div/div[2]/ul/li[2]/div/ul/li[5]/a");
+    @FindBy(xpath = ("//div[@class = 'col-sm-10']//input[@id ='input-password']"))
+    public WebElement inputPasswordLocator;
 
-    private final By btnContinueAccountLogout = By.xpath("/html/body/main/div[2]/div/div/div/a"); // Account Logout page
+    @FindBy(xpath = ("//*[@id='form-register']/div/div/input"))
+    public WebElement agreeSliderLocator;
 
-    private final By alertEmailAddressIsAlreadyRegistered = By.xpath("//*[@id=\"alert\"]");
+    @FindBy(xpath = ("//*[@id=\"form-register\"]/div/button"))
+    public WebElement btnContinueRegister;
 
-    private final String findByNamePattern = "//*[@id=\"error-firstname\"]";
+    @FindBy(xpath = ("//h1[text()='Your Account Has Been Created!']"))
+    public WebElement inscriptionYourAccountHasBeenCreated;
+
+    @FindBy(xpath = ("//a[contains(text(),'Continue')]"))
+    public WebElement btnContinue;
+
+    @FindBy(xpath = ("/html/body/nav/div/div[2]/ul/li[2]/div/a/span"))
+    public WebElement btnDropDownToggleLocator;
+
+    @FindBy(xpath = ("/html/body/nav/div/div[2]/ul/li[2]/div/ul/li[5]/a"))
+    public WebElement logoutLocator;
+
+    @FindBy(xpath = ("/html/body/main/div[2]/div/div/div/a"))
+    public WebElement btnContinueAccountLogout;
+
+    @FindBy(xpath = ("//*[@id=\"alert\"]"))
+    public WebElement alertEmailAddressIsAlreadyRegistered;
+
+    @FindBy(xpath = ("//div[@id='error-firstname']"))
+    public WebElement firstNameError;
+
 
     public RegistrationPage(WebDriver driver) {
         super(driver);
     }
 
+    @SneakyThrows
     public void fillRegistrationForm(String firstName, String lastName, String email, String password) {
         fillField(inputFirstNameLocator, firstName);
         fillField(inputLastNameLocator, lastName);
@@ -37,31 +61,38 @@ public class RegistrationPage extends BasePage {
         fillField(inputPasswordLocator, password);
 
         waitForElementToBePresent(agreeSliderLocator);
-        clickWithJavascript(driver.findElement(agreeSliderLocator));
+
+        clickWithJavascript(agreeSliderLocator);
 
         submitElement(btnContinueRegister);
     }
 
-    public String getActualInscription() {
-        return getTextOfString(inscriptionYourAccountHasBeenCreated);
+
+//    public String getActualInscription() {
+//        return getTextOfString(inscriptionYourAccountHasBeenCreated);
+//    }
+
+    public WebElement getInscriptionYourAccountHasBeenCreated() {
+        return inscriptionYourAccountHasBeenCreated;
     }
 
-    public String getActualAlert() {
-        return getTextOfMessage(alertEmailAddressIsAlreadyRegistered);
-    }
 
     public void yourAccountHasBeenCreated() {
-        clickElement(btnContinue);
-        clickElement(btnDropDownToggleLocator);
-        clickElement(logoutLocator);
-        clickElement(btnContinueAccountLogout);
+        clickElement( btnContinue);
+        clickElement( btnDropDownToggleLocator);
+        clickElement( logoutLocator);
+        clickElement( btnContinueAccountLogout);
     }
 
-    public By getLocatorByName(String warningMessage) {
-        By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
-        return warningMessageLocator;
-    }
+//    public By getLocatorByName(String warningMessage) {
+//        By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
+//        return warningMessageLocator;
+//    }
 
+
+    public WebElement getFirstNameError() {
+        return firstNameError;
+    }
 }
 
 

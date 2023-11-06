@@ -1,6 +1,6 @@
 package com.endava.atf.transition.definitions;
 
-import Context.ScenarioContext;
+import com.endava.atf.transition.context.ScenarioContext;
 import com.endava.atf.transition.testDataAPI.*;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -50,6 +50,7 @@ public class StepDefApi2 {
                 contentType(ContentType.JSON).
                 when().
                 get(endpoint);
+
         scenarioContext.setContext("response", response);
 
     }
@@ -103,7 +104,9 @@ public class StepDefApi2 {
     @Then("all avatars are displaying on the screen from the list")
     public void displayAllAvatarsFromTheList() {
         log.info("All avatars are displayed");
+
         Response response = (Response) scenarioContext.getContext("response");
+
         List<UserData> users = response.getBody().jsonPath().getList("data", UserData.class);
         List<String> avatars = users.stream().map(UserData::getAvatar).collect(Collectors.toList());
 
