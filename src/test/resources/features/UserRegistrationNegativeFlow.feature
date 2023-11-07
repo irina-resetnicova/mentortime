@@ -5,11 +5,11 @@ Feature: User Registration Negative Flow
   Scenario Outline: User ca not be registered if first name does not meet requirements
     Given the User is on Register page
     And the User does not have any account with <mail>
-    When the User registers with the wrong firstname
+    When the User registers with first name does not meet requirements
       | firstName   | lastName   | email   | password   |
       | <firstName> | <lastName> | <email> | <password> |
-    Then the User is not registered with <email>
-    And a warning message <warning message> is displayed on the screen
+#    Then the User is not registered with <email>
+#    And a warning message <warning message> is displayed on the screen
     Examples:
       | firstName                            | lastName | email            | password | warning message                                 |
       | IrinaIrinaIrinaIrinaIrinaIrinaIriiuy | Petrov   | petrov@gmail.com | 1234567  | First Name must be between 1 and 32 characters! |

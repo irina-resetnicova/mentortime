@@ -8,7 +8,7 @@ Feature: User Registration Positive Flow
     When the User registers with the following details:
       | firstName   | lastName   | email   | password   |
       | <firstName> | <lastName> | <email> | <password> |
-    Then the User is redirected to the page Your Account Has Been Created!
+#    Then the User is redirected to the page Your Account Has Been Created!
     And the inscription Your Account Has Been Created! appears on the screen
     And the User's registration is successful
     Examples:

@@ -7,7 +7,7 @@ public class ScenarioContext {
     private static ScenarioContext instance;
     private Map<String, Object> scenarioContext;
 
-    public ScenarioContext() {
+    private   ScenarioContext() {
         scenarioContext = new HashMap<>();
     }
 
@@ -33,7 +33,6 @@ public class ScenarioContext {
     public void clearContext() {
         scenarioContext.clear();
     }
-
 
 }
 

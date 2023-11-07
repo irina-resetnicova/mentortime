@@ -1,9 +1,9 @@
 package com.endava.atf.transition.definitions;
 
-import com.endava.atf.transition.utils.Helper;
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.RegistrationPage;
 import com.endava.atf.transition.testDataUI.UserDao;
+import com.endava.atf.transition.utils.Helper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -11,6 +11,7 @@ import io.cucumber.java.en.When;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,15 +26,15 @@ public class StepDefinitions {
     private final BasePage basePage;
 
     public StepDefinitions(UserDao query) {
-        this.query = query;
-        this.registrationPage = new RegistrationPage(Driver.getDriver());
-        this.basePage = new BasePage(Driver.getDriver());
+        this.query = query; // injection from cucumber context
+        this.registrationPage = new RegistrationPage(Driver.getDriver()); // new initialisation
+        this.basePage = new BasePage(Driver.getDriver()); // new initialisation
     }
 
     @Given("the User is on Register page")
     public void userIsOnRegisterPage() {
         Helper.openRegisterPage();
-        log.info("User is on register page");
+        log.info("User is on Register page");
 
     }
 
@@ -41,11 +42,11 @@ public class StepDefinitions {
 
     @Given("the User does not have any existing accounts")
     public void userDoesNotHaveAnyAccounts() {
-
         log.info("User does not have any ACCOUNTS");
 
     }
-
+// ключ -заголовок столбца таблицы
+    //
     @When("the User registers with the following details:")
     public void userRegisters(DataTable table) {
         List<Map<String, String>> rows = table.asMaps(String.class, String.class);
@@ -73,18 +74,18 @@ public class StepDefinitions {
         String currentURL = Driver.getDriver().getCurrentUrl();
         Assert.assertEquals("The URLs are not equals", expectedURL, currentURL);
 
-        log.info("User relocated onto another page");
-
     }
 
     @Then("the inscription {} appears on the screen")
     public void theInscriptionIsAppearedOnTheScreen(String string) {
-        log.info("The inscription Your Account Has Been Created! is appeared on the screen");
+
 
         String actualString = basePage.getTextOfString(registrationPage.getInscriptionYourAccountHasBeenCreated());
-
         assertEquals(string, actualString);
+        log.info("The inscription  " + actualString +  "  is appeared on the screen");
+
         registrationPage.yourAccountHasBeenCreated();
+
 
     }
 
@@ -115,8 +116,7 @@ public class StepDefinitions {
         int rsDeleteAll = query.deleteAllByEmail(email).executeUpdate();
     }
 
-
-    @When("the User registers with the wrong firstname")
+    @When("the User registers with first name does not meet requirements")
     public void userRegistersWithWrongFirstname(DataTable table) {
 
         List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
@@ -134,29 +134,29 @@ public class StepDefinitions {
             log.info("User presses the btn Continue");
         }
 
+
+
     }
 
     @Then("the User is not registered with {}")
     public void userIsNotRegisteredWithEnteredCredential(String email) throws SQLException {
-        log.info("the user is not registered with invalid data email");
+        log.info("The user is not registered with invalid data email");
 
         ResultSet rsSelect = query.selectAllUsersByEmail(email).executeQuery();
 
-            while (rsSelect.next()) {
-                log.error("email: " + rsSelect.getString("email"));
-                System.out.println();
+        while (rsSelect.next()) {
+            log.error("email: " + rsSelect.getString("email"));
+            System.out.println();
 
+            ResultSet rsCountAll = query.countUsersByEmail(email).executeQuery();
 
-                ResultSet rsCountAll = query.countUsersByEmail(email).executeQuery();
-
-                while (rsCountAll.next()) {
-                    int userCount = rsCountAll.getInt("user_count");
-                    int expectUserCount = 1;
-                    Assert.assertEquals("User can register with an existing account", userCount, expectUserCount);
-                }
-
+            while (rsCountAll.next()) {
+                int userCount = rsCountAll.getInt("user_count");
+                int expectUserCount = 1;
+                Assert.assertEquals("User can register with an existing account", userCount, expectUserCount);
             }
-
+        }
+        registrationPage.yourAccountHasBeenCreated();
     }
 
     @Then("a warning message {} is displayed on the screen")
@@ -164,7 +164,7 @@ public class StepDefinitions {
         log.info("The warning message <First Name must be between 1 and 32 characters!> appears on the screen");
 
 
-         String actualWarningMessage = basePage.getTextOfString(registrationPage.getFirstNameError());
+        String actualWarningMessage = basePage.getTextOfString(registrationPage.getFirstNameError());
 
         if (actualWarningMessage.equals(expectedWarningMessage)) {
             log.info("The warning messages are equals");
@@ -174,7 +174,7 @@ public class StepDefinitions {
 
     }
 
-// Scenario: Registration with Existing User
+    // Scenario: Registration with Existing User
     @Given("the User already has an account")
     public void userIsAlreadyRegistered() throws SQLException {
 
@@ -195,7 +195,6 @@ public class StepDefinitions {
         log.info("User presses the btn Continue");
 
     }
-
 
     @Then("STOP! the User is not registered with the existing {}")
     public void userIsNotRegisteredWithExistingEmail(String email) throws SQLException {
@@ -232,21 +231,22 @@ public class StepDefinitions {
 
     @Then("the User is not relocated to another page")
     public void notRelocatedOntoAnotherPage() {
-        log.info("the User is not relocated to another page");
-
+        log.info("The User is not relocated to another page");
         String expectedURL = "http://localhost:8080/en-gb?route=account/register";
         String currentURL = Driver.getDriver().getCurrentUrl();
         Assert.assertEquals("The URLs are equals!", expectedURL, currentURL);
 
     }
 
-//    @Then("an alert message {} is displayed on the screen")
-//    public void anAlertMessageEMailAddressIsAlreadyRegistered(String alert) {
-//
-//        String actualAlert = registrationPage.getActualAlert();
-//        assertEquals(alert, actualAlert);
-//        log.info("Warning message <Warning: E-Mail Address is already registered!> is appeared on the screen");
-//    }
+    @Then("an alert message {} is displayed on the screen")
+    public void anAlertMessageEMailAddressIsAlreadyRegistered(String alert) {
+
+//        String actualAlert = registrationPage.getAlertEmailAddressIsAlreadyRegistered();
+        String actualAlert = basePage.getTextOfString(registrationPage.getAlertEmailAddressIsAlreadyRegistered());
+
+        assertEquals(alert, actualAlert);
+        log.info("Warning message <Warning: E-Mail Address is already registered!> is appeared on the screen");
+    }
 
 
 }

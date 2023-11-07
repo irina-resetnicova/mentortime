@@ -1,38 +1,47 @@
 package com.endava.atf.transition.definitions;
 
 import com.endava.atf.transition.config.DataBase.DbConnection;
+import com.endava.atf.transition.config.DataBase.YAMLConfigLoader;
 import com.endava.atf.transition.context.ScenarioContext;
+import com.endava.atf.transition.context.TestContext;
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.UserDao;
 import com.endava.atf.transition.utils.Helper;
-import io.cucumber.java.After;
-import io.cucumber.java.AfterAll;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
+import io.cucumber.java.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class Hooks {
     private static final Logger log = LogManager.getLogger(Hooks.class);
-
+    private ScenarioContext scenarioContext = ScenarioContext.getInstance();
+    private static boolean isUITest = false;
     private UserDao query;
     private static final int counter = 0;
-    private ScenarioContext scenarioContext = ScenarioContext.getInstance();
+    private static String currentScenarioName = null;
 
     public Hooks(UserDao query) {
         this.query = query;
+    } // in cucumber Context
+
+    @BeforeAll
+    public static void initApplication() throws IOException {
+        YAMLConfigLoader configLoader = new YAMLConfigLoader();
+        Map<String, Object> yamlData = configLoader.loadYAML("src/test/resources/application.yml");
+        TestContext.setProperties(yamlData);
+
     }
 
-    private static String currentScenarioName = null;
 
     @Before("@API")
     public void setUpApi(Scenario scenario) {
         String scenarioName = scenario.getName();
         System.out.println("\u001B[32mSCENARIO: " + scenarioName + "\u001B[0m");
-        log.info("Test started");
+        log.info("Test started " + getClass());
         scenarioContext.clearContext();
         ApiSpecifications.getRequestSpecification();
 //        RestAssured.requestSpecification = ApiSpecifications.getRequestSpecification();
@@ -46,7 +55,11 @@ public class Hooks {
         System.out.println("\u001B[32mSCENARIO: " + scenarioName + "\u001B[0m");
         Helper.setDriver(Driver.getDriver());
         scenarioContext.clearContext();
-        log.info("Test started");
+        log.info("Test started: " + getClass());
+
+        if (scenario.getSourceTagNames().contains("@UI")) {
+            isUITest = true;
+        }
     }
 
     @Before("@DBClean")
@@ -64,37 +77,24 @@ public class Hooks {
         }
     }
 
-
     @After("@UI")
     public void closeWebdriver() {
         log.info("Scenario finished");
-
 
     }
 
     @AfterAll
     public static void tearDown() {
         log.info("Test finished");
-        if (Driver.getDriver() != null) {
-            Driver.tearDown(); // Закрывает браузер
+        if (isUITest) {
+            Driver.tearDown();
+//            isUITest=false;
         }
         DbConnection.closeConnection();
         ScenarioContext sc = ScenarioContext.getInstance();
         sc.clearContext();
-
     }
 }
-
-//    @Before("@CleanDB")
-//    public static void deleteAllUsers() throws SQLException {
-//        int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
-//
-//    }
-//    @BeforeClass
-//    public void cleanDB() throws SQLException {
-//            int rsDeleteAll = queryDeleteAll.getPsDeleteAll().executeUpdate();
-//
-//    }
 
 
 

@@ -8,6 +8,7 @@ Feature: List of Users
     When a GET request is sent to the server with the endpoint "api/users?page=2"
     Then the response code should be 200
     And the response is retrieved and displayed on the screen
+    And the response confirm requirements
 
   @GetEmails
   Scenario: Verifying that all User Emails end on reqres.in

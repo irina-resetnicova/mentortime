@@ -2,12 +2,17 @@ package com.endava.atf.transition.testDataUI;
 
 import com.endava.atf.transition.definitions.BasePage;
 import lombok.SneakyThrows;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 public class RegistrationPage extends BasePage {
+//    Конструктор будет вызываться при создании нового объекта RegistrationPage
+    public RegistrationPage(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(driver, this); // Инициализация элементов страницы
+    }
 
     @FindBy(xpath = ("//div[@class = 'col-sm-10']//input[@id ='input-firstname']"))
     public WebElement inputFirstNameLocator;
@@ -49,10 +54,6 @@ public class RegistrationPage extends BasePage {
     public WebElement firstNameError;
 
 
-    public RegistrationPage(WebDriver driver) {
-        super(driver);
-    }
-
     @SneakyThrows
     public void fillRegistrationForm(String firstName, String lastName, String email, String password) {
         fillField(inputFirstNameLocator, firstName);
@@ -68,30 +69,25 @@ public class RegistrationPage extends BasePage {
     }
 
 
-//    public String getActualInscription() {
-//        return getTextOfString(inscriptionYourAccountHasBeenCreated);
-//    }
-
     public WebElement getInscriptionYourAccountHasBeenCreated() {
         return inscriptionYourAccountHasBeenCreated;
     }
 
 
     public void yourAccountHasBeenCreated() {
-        clickElement( btnContinue);
-        clickElement( btnDropDownToggleLocator);
-        clickElement( logoutLocator);
-        clickElement( btnContinueAccountLogout);
+        clickElement(btnContinue);
+        clickElement(btnDropDownToggleLocator);
+        clickElement(logoutLocator);
+        clickElement(btnContinueAccountLogout);
     }
-
-//    public By getLocatorByName(String warningMessage) {
-//        By warningMessageLocator = By.xpath(String.format(findByNamePattern, warningMessage));
-//        return warningMessageLocator;
-//    }
 
 
     public WebElement getFirstNameError() {
         return firstNameError;
+    }
+
+    public WebElement getAlertEmailAddressIsAlreadyRegistered() {
+        return alertEmailAddressIsAlreadyRegistered;
     }
 }
 

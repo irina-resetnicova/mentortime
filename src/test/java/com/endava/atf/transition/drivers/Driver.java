@@ -1,20 +1,18 @@
 package com.endava.atf.transition.drivers;
 
-import io.cucumber.java.an.E;
-import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.time.Duration;
-
 public class Driver {
-
+    private static final Logger log = LogManager.getLogger(Driver.class);
     private static WebDriver driver;
     public static String driverPath = "src/test/resources/chromedriver.exe";
-    private static final Logger log = LogManager.getLogger(Driver.class);
+
+    private Driver() {
+    }
 
     public static void setUpDriver() {
         if (driver == null) {
@@ -37,8 +35,7 @@ public class Driver {
         if (driver == null) {
             try {
                 setUpDriver();
-            }
-            catch (Exception ex){
+            } catch (Exception ex) {
                 throw new IllegalStateException("WebDriver has not been initialized. Call setUpDriver() first.");
             }
         }

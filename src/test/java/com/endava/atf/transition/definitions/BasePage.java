@@ -1,6 +1,5 @@
 package com.endava.atf.transition.definitions;
 
-import org.apache.commons.io.function.IOStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
@@ -19,13 +18,11 @@ public class BasePage {
     private final WebDriverWait wait;
     private static final Logger log = LogManager.getLogger(BasePage.class);
 
-    // инжекшн через пикоконтейнер
     public BasePage(WebDriver driver) {
         this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);
     }
-
 
     public void waitForElementToBePresent(WebElement element) {
         try {
@@ -40,10 +37,10 @@ public class BasePage {
     }
 
     public void clickWithJavascript(WebElement element) {
-        try{
-        JavascriptExecutor executor = (JavascriptExecutor) driver;
-        executor.executeScript("arguments[0].click();", element);
-    }catch (TimeoutException e) {
+        try {
+            JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].click();", element);
+        } catch (TimeoutException e) {
             log.error("the time is up: " + e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -82,7 +79,6 @@ public class BasePage {
 
     }
 
-
     public void clickElement(WebElement element) {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -113,8 +109,8 @@ public class BasePage {
             log.error("the exception: " + e.getMessage());
             throw e;
         }
-        }
     }
+}
 
 
 

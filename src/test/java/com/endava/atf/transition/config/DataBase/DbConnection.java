@@ -1,6 +1,7 @@
 package com.endava.atf.transition.config.DataBase;
 
-import com.endava.atf.transition.definitions.StepDefinitionsAPI;
+//import com.endava.atf.transition.definitions.StepDefinitionsAPI;
+import com.endava.atf.transition.context.TestContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,9 +18,9 @@ public class DbConnection {
     }
 
     private static Connection initialization() throws SQLException, ClassNotFoundException {
-        final String DB_URL = "jdbc:mysql://localhost:3306/opencart";
-        final String USER = "opencart";
-        final String PASS = "opencart";
+        final String DB_URL = (String) TestContext.getProperties().get("db_url");
+        final String USER = (String) TestContext.getProperties().get("db_username");;
+        final String PASS = (String) TestContext.getProperties().get("db_password");;
 
         // read values from AppConfiguration
         // установливается соединение Connection с базой данных(параметры) через JDBC drivers
