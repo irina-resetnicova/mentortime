@@ -1,190 +1,270 @@
 package com.endava.atf.transition.definitions;
-import com.endava.atf.transition.config.Browser;
-import com.endava.atf.transition.config.WebDriverFactory;
-import com.endava.atf.transition.config.DataBase.DbManager;
+
+import com.endava.atf.transition.drivers.Driver;
+import com.endava.atf.transition.testDataUI.RegistrationPage;
+import com.endava.atf.transition.testDataUI.UserDao;
 import com.endava.atf.transition.utils.Helper;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import com.endava.atf.transition.testData.RegistrationPage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class StepDefinitions {
-    private DbManager dbManager;
-    private static WebDriver webdriver;
-    private RegistrationPage registrationPage = new RegistrationPage();
+    private static final Logger log = LogManager.getLogger(StepDefinitions.class);
+    private final UserDao query;
+    private final RegistrationPage registrationPage;
+    private final BasePage basePage;
 
-    static {
-        webdriver = WebDriverFactory.getDriver(Browser.CHROME);
+    public StepDefinitions(UserDao query) {
+        this.query = query; // injection from cucumber context
+        this.registrationPage = new RegistrationPage(Driver.getDriver()); // new initialisation
+        this.basePage = new BasePage(Driver.getDriver()); // new initialisation
+    }
+
+    @Given("the User is on Register page")
+    public void userIsOnRegisterPage() {
+        Helper.openRegisterPage();
+        log.info("User is on Register page");
 
     }
 
-    public StepDefinitions(DbManager dbManager) {
-        this.dbManager = dbManager;
-    }
-    
-    //OpenCart.feature
-    WebDriver driver = WebDriverFactory.getDriver(Browser.CHROME);
+//    Scenario Outline: A new User is successfully registered
 
-    @Given("User is on the Home page")
-    public void userIsOnHomePage() {
-        Helper.openPage();
-//        webdriver.get("http://localhost:8080/en-gb?route=common/home");
-    }
-
-    @And("User is not registered")
-    public void userIsNotRegistered() {
-        
-        //select
-        //resultset is empty
-    }
-
-    @When("User goes on Register page")
-    public void userGoesOnRegisterPage() {webdriver.get("http://localhost:8080/en-gb?route=account/register");
-    }
-
-    @And("User fills firstName {}")
-    public void userFillsFirstName(String firstName) {
-        driver.findElement(registrationPage.getInputFirstName()).sendKeys(firstName);
+    @Given("the User does not have any existing accounts")
+    public void userDoesNotHaveAnyAccounts() {
+        log.info("User does not have any ACCOUNTS");
 
     }
+// ключ -заголовок столбца таблицы
+    //
+    @When("the User registers with the following details:")
+    public void userRegisters(DataTable table) {
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
 
-    @And("User fills lastName {}")
-    public void userFillsLastName(String lastName) {
-        driver.findElement(registrationPage.getInputLastName()).sendKeys(lastName);
+        for (Map<String, String> row : rows) {
+            registrationPage.fillRegistrationForm(
+                    row.get("firstName"),
+                    row.get("lastName"),
+                    row.get("email"),
+                    row.get("password")
+            );
 
+            log.info("User registers: firstName, lastName, email, password");
+            log.info("User moves slider on the rightSide");
+            log.info("User presses the btn Continue");
+        }
     }
 
-    @And("User fills email {}")
-    public void userFillsEmailEmail(String email) {
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(email);
-    }
+    @Then("the User is redirected to the page Your Account Has Been Created!")
+    public void userIsRelocatedOnThePage() {
+        log.info("User is relocated on the page Your Account Has Been Created!");
 
-
-    @And("User fills password {}")
-    public void userFillsPassword(String password) {
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(password);
+        System.out.println("current page" + Driver.getDriver().getCurrentUrl());
+        String expectedURL = "http://localhost:8080/en-gb?route=account/register";
+        String currentURL = Driver.getDriver().getCurrentUrl();
+        Assert.assertEquals("The URLs are not equals", expectedURL, currentURL);
 
     }
 
-    @And("User clicks on newsletter")
-    public void userClicksOnNewsletter() {
-        driver.findElement(registrationPage.getBtnAgree()).click();
+    @Then("the inscription {} appears on the screen")
+    public void theInscriptionIsAppearedOnTheScreen(String string) {
+
+
+        String actualString = basePage.getTextOfString(registrationPage.getInscriptionYourAccountHasBeenCreated());
+        assertEquals(string, actualString);
+        log.info("The inscription  " + actualString +  "  is appeared on the screen");
+
+        registrationPage.yourAccountHasBeenCreated();
+
 
     }
 
-    @And("User clicks on agreementOfThePrivacyPolicy")
-    public void userClicksOnAgreementOfThePrivacyPolicy() {
-        WebElement element = driver.findElement(registrationPage.getBtnAgree());
-        Actions actions = new Actions(driver);
-        actions.moveToElement(element);
-        actions.perform();
-//        driver.findElement(registrationPage.getBtnAgree()).click();
+    @Then("the User's registration is successful")
+    public void userIsRegistered() {
+        log.info("User is registered");
+
+        try (ResultSet rsSelectAll = query.selectAllCustomers().executeQuery()) {
+            while (rsSelectAll.next()) {
+                System.out.println();
+                System.out.println("firstname: " + rsSelectAll.getString("firstname"));
+                System.out.println("lastname: " + rsSelectAll.getString("lastname"));
+                System.out.println("email: " + rsSelectAll.getString("email"));
+                System.out.println("password: " + rsSelectAll.getString("password"));
+                System.out.println();
+            }
+        } catch (SQLException ex) {
+            log.error(ex.getMessage(), ex);
+        }
+    }
+
+
+//    Scenario Outline: User can not be registered if first name does not confirm requirements
+
+    @Given("the User does not have any account with {}")
+    public void userDoesNotHaveAccount(String email) throws SQLException {
+        log.info("User does not have any account");
+        int rsDeleteAll = query.deleteAllByEmail(email).executeUpdate();
+    }
+
+    @When("the User registers with first name does not meet requirements")
+    public void userRegistersWithWrongFirstname(DataTable table) {
+
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
+
+        for (Map<String, String> row : rows) {
+            registrationPage.fillRegistrationForm(
+                    row.get("firstName"),
+                    row.get("lastName"),
+                    row.get("email"),
+                    row.get("password")
+            );
+
+            log.info("User registers: firstName, lastName, email, password");
+            log.info("User moves slider on the rightSide");
+            log.info("User presses the btn Continue");
+        }
+
+
 
     }
 
-    @And("User clicks on btn continue")
-    public void userClicksBContinue() {
-        driver.findElement(registrationPage.getBtnContinue()).click();
+    @Then("the User is not registered with {}")
+    public void userIsNotRegisteredWithEnteredCredential(String email) throws SQLException {
+        log.info("The user is not registered with invalid data email");
 
-    }
+        ResultSet rsSelect = query.selectAllUsersByEmail(email).executeQuery();
 
-    @Then("User is registered")
-    public void userIsRegistered() throws SQLException {
-        
-        String QUERY = "select * from oc_user u where u.username = ''";
-        ResultSet rs = new DbManager().getPstmt().executeQuery(QUERY);
-        try {
-            while (rs.next()) {
+        while (rsSelect.next()) {
+            log.error("email: " + rsSelect.getString("email"));
+            System.out.println();
 
-                System.out.print("ID: " + rs.getInt("user_id"));
-                System.out.print(", First: " + rs.getString("firstname"));
-                System.out.println(", Last: " + rs.getString("lastname"));
-                System.out.println(", username: " + rs.getString("username"));
-                String username=null;
-                username = rs.getString("username");
-                assertEquals("admin1", username);
+            ResultSet rsCountAll = query.countUsersByEmail(email).executeQuery();
 
-                rs.close();
+            while (rsCountAll.next()) {
+                int userCount = rsCountAll.getInt("user_count");
+                int expectUserCount = 1;
+                Assert.assertEquals("User can register with an existing account", userCount, expectUserCount);
             }
         }
-        catch(SQLException se)
-            {
-//                 log exception
-                throw se;
-            }
+        registrationPage.yourAccountHasBeenCreated();
     }
 
-    @Then("User is relocated on the page {string}")
-    public void userIsRelocatedOnThePage() {
-        webdriver.get("http://localhost:8080/en-gb?route=account/success&customer_token=742ebc0b54291c7a7443e8f401");
+    @Then("a warning message {} is displayed on the screen")
+    public void aWarningMessageWarningMessageIsAppearedOnTheScreen(String expectedWarningMessage) {
+        log.info("The warning message <First Name must be between 1 and 32 characters!> appears on the screen");
+
+
+        String actualWarningMessage = basePage.getTextOfString(registrationPage.getFirstNameError());
+
+        if (actualWarningMessage.equals(expectedWarningMessage)) {
+            log.info("The warning messages are equals");
+        } else {
+            log.error("The warning messages are not equals");
+        }
+
     }
 
-//    @And("The inscription {string} is appeared on the screen")
-//    public void theInscriptionIsAppearedOnTheScreen() {
-//        driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated());
-//    }
-
-    @And("The inscription {string} is appeared on the screen")
-    public void theInscriptionIsAppearedOnTheScreen(String text) {
-        driver.findElement(registrationPage.getInscriptionYourAccountHasBeenCreated()).getAttribute(text);
-    }
-
-
-    @And("A warning message {} is appeared on the screen")
-    public void aWarningMessageWarningMessageIsAppearedOnTheScreen(String warningMessage) {
-//        driver.findElement(registrationPage.getInscriptionFNBoundary()).getAttribute("First Name must be between 1 and 32 characters!");
-        
-        driver.findElement(registrationPage.getLocatorByName(warningMessage));
-    }
-
-    @And("User is already registered")
+    // Scenario: Registration with Existing User
+    @Given("the User already has an account")
     public void userIsAlreadyRegistered() throws SQLException {
 
-        String insertUserQuery = "INSERT INTO oc_user (firstname, lastname, email, password) " +
-                "VALUES ('Ira', 'Fedorova', 'mail@mail.com', '123456');";
+        int rsDelete = query.deleteCustomerByEmail("john@gmail.com").executeUpdate();
+        int rsInsert = query.insertCustomer("John", "Baiden", "john@gmail.com", "1234").executeUpdate();
 
-        try {
-            int rsInsert = new DbManager().getPstmt().executeUpdate(insertUserQuery);
-            assertTrue(rsInsert==1, "User is already existed");
+        log.info("User has already its account");
 
-        }catch(RuntimeException e){
-            log.error("Exception: DB insert exception");
-            e.printStackTrace();
+    }
+
+    @When("the User tries to register with an existing account {}, {}, {}, {}")
+    public void userTryToRegisterWithExistingAccountFirstNameLastNameEmailPassword(String firstname, String lastname, String email, String password) {
+        log.info("User tries to register with existing account:  ");
+        registrationPage.fillRegistrationForm(firstname, lastname, email, password);
+
+        log.info("User registers: firstName, lastName, email, password");
+        log.info("User moves slider on the rightSide");
+        log.info("User presses the btn Continue");
+
+    }
+
+    @Then("STOP! the User is not registered with the existing {}")
+    public void userIsNotRegisteredWithExistingEmail(String email) throws SQLException {
+        ResultSet rsSelect = query.getCustomerByEmail(email).executeQuery();
+//        System.out.println("List of customers with email: " + query.getEmailValue());
+
+        while (rsSelect.next()) {
+            System.out.println("\u001B[33mfirstname: " + rsSelect.getString("firstname") + "\u001B[0m");
+            System.out.println("\u001B[33mlastname: " + rsSelect.getString("lastname") + "\u001B[0m");
+            System.out.println("\u001B[33memail: " + rsSelect.getString("email") + "\u001B[0m");
+            System.out.println("\u001B[33mpassword: " + rsSelect.getString("password") + "\u001B[0m");
+            System.out.println();
 
         }
+        rsSelect.close();
 
+        ResultSet rsCount = query.countUsersByEmail(email).executeQuery();
+
+        while (rsCount.next()) {
+            int userCount = rsCount.getInt("user_count");
+
+            System.out.printf("Count of customers with email %s: %d%n%n", email, userCount);
+
+            int expectUserCount = 1;
+            Assert.assertEquals(userCount, expectUserCount);
+
+            if (userCount == 1) {
+                log.info("User can not register with existing account");
+            } else {
+                log.error("User registers with existing account");
+            }
+        }
+    }
+
+    @Then("the User is not relocated to another page")
+    public void notRelocatedOntoAnotherPage() {
+        log.info("The User is not relocated to another page");
+        String expectedURL = "http://localhost:8080/en-gb?route=account/register";
+        String currentURL = Driver.getDriver().getCurrentUrl();
+        Assert.assertEquals("The URLs are equals!", expectedURL, currentURL);
 
     }
 
-    @And("User fills  credentials")
-    public void userFillsCredentials() {
-        
-    }
-       //https://www.baeldung.com/cucumber-data-tables
-    @And("User registers")
-    public void userRegisters(DataTable table) {
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class); // convert data table into List(Map)
-        Map<String, String> row = rows.get(0); // use for use documentation
+    @Then("an alert message {} is displayed on the screen")
+    public void anAlertMessageEMailAddressIsAlreadyRegistered(String alert) {
 
-        driver.findElement(registrationPage.getInputFirstName()).sendKeys(row.get("firstName"));
-        driver.findElement(registrationPage.getInputLastName()).sendKeys(row.get("lastName"));
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(row.get("email"));
-        driver.findElement(registrationPage.getInputPassword()).sendKeys(row.get("password"));
-        driver.findElement(registrationPage.getBtnAgree()).click();
-        driver.findElement(registrationPage.getBtnContinue()).click();
-        driver.findElement(registrationPage.getBtnAgree()).click();
+//        String actualAlert = registrationPage.getAlertEmailAddressIsAlreadyRegistered();
+        String actualAlert = basePage.getTextOfString(registrationPage.getAlertEmailAddressIsAlreadyRegistered());
 
+        assertEquals(alert, actualAlert);
+        log.info("Warning message <Warning: E-Mail Address is already registered!> is appeared on the screen");
     }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

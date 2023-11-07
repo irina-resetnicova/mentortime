@@ -1,53 +1,54 @@
-/*create class: DbConnection based on JDBC library
-(https://stackoverflow.com/questions/74183544/get-connection-with-singleton-pattern)
-
-        DbConnection class must implement Singleton pattern.*/
-
 package com.endava.atf.transition.config.DataBase;
 
-import java.sql.Connection; // подготавливает подключение к базе
-import java.sql.DriverManager; //обеспечивает подключение черезJDBC drivers
-import java.sql.SQLException; //обрабатывает SQL-ошибки, возникающие при взаимодействии приложении и базы данных.
+//import com.endava.atf.transition.definitions.StepDefinitionsAPI;
+import com.endava.atf.transition.context.TestContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 
 public class DbConnection {
-
+    private static final Logger log = LogManager.getLogger(DbConnection.class);
     private static Connection connection = null;
 
-    // инициализируем connection
+    private DbConnection() {
+    }
+
     private static Connection initialization() throws SQLException, ClassNotFoundException {
-        final String DB_URL = "jdbc:mysql://localhost:3306/opencart";
-        final String USER = "opencart";
-        final String PASS = "opencart";
+        final String DB_URL = (String) TestContext.getProperties().get("db_url");
+        final String USER = (String) TestContext.getProperties().get("db_username");;
+        final String PASS = (String) TestContext.getProperties().get("db_password");;
 
-        connection = DriverManager.getConnection(DB_URL, USER, PASS); // установливается соединение Connection с базой данных(параметры) через JDBC drivers
+        // read values from AppConfiguration
+        // установливается соединение Connection с базой данных(параметры) через JDBC drivers
+        connection = DriverManager.getConnection(DB_URL, USER, PASS);
 
-        System.out.println("Connected to database");
+        log.info("Connected to database");
         return connection;
     }
 
-    //создаем connection
     public static Connection getInstance() {
         if (connection == null) {
             try {
                 connection = initialization();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
         return connection;
     }
+
+    public static void closeConnection() {
+        if(connection!=null)
+        connection = null;
+    }
+
+    public static Connection getConnection() {
+        return connection;
+    }
 }
-
-
-
-//JDBC driver уже есть в dependency
-//<dependency>
-//<groupId>mysql</groupId>
-//<artifactId>mysql-connector-java</artifactId>
-//<version>8.0.16</version>
-//</dependency>
 
 

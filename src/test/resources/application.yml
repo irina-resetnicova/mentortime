@@ -1,0 +1,7 @@
+db_url: jdbc:mysql://localhost:3306/opencart
+db_username: opencart
+db_password: opencart
+hostname: localhost:8080
+
+
+
