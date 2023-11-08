@@ -50,4 +50,6 @@ public class Driver {
             log.info("WebDriver has been quit and reset.");
         }
     }
+
+
 }

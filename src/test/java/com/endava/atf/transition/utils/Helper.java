@@ -12,7 +12,6 @@ public class Helper {
     }
 
     public static void openRegisterPage() {
-//        driver.get(TestContext.url + "/en-gb?route=account/register");
         driver.get("http://localhost:8080/en-gb?route=account/register");
     }
 

@@ -1,4 +1,4 @@
-package com.endava.atf.transition.definitions;
+package com.endava.atf.transition.testDataUI;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,13 +12,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class BasePage {
+public class BasePage extends WebPageSteps {
 
     protected WebDriver driver;
     private final WebDriverWait wait;
     private static final Logger log = LogManager.getLogger(BasePage.class);
 
     public BasePage(WebDriver driver) {
+        super(driver); ///
         this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);
@@ -67,6 +68,7 @@ public class BasePage {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement visibleElement = wait.until(ExpectedConditions.visibilityOf(element));
             if (visibleElement != null) {
+
                 visibleElement.submit();
             }
         } catch (TimeoutException e) {
