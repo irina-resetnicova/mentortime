@@ -143,8 +143,6 @@ public class StepDefApi2 {
         System.out.println(sortedYears);
     }
 
-
-
     @When("a POST request is sent to the Server with the endpoint {string}")
     public void postRequestIsSentToTheServer(String endpoint) {
         log.info("POST request is sent to the Server");
@@ -182,7 +180,6 @@ public class StepDefApi2 {
         Assert.assertEquals(successReg.getToken(), expectedToken);
         scenarioContext.setContext("response", response);
     }
-
 
     @Then("the result is not null")
     public void resultIsNoNull() {
@@ -232,10 +229,8 @@ public class StepDefApi2 {
         System.out.println("actual status code is: " + actualStatusCode);
         System.out.println("expected status code is: " + expectedStatusCode);
         Assert.assertEquals(expectedStatusCode, actualStatusCode);
-
         scenarioContext.setContext("response", response);
     }
-
 
     @When("a POST request is sent to the Server: {string}")
     public void aPOSTRequestIsSentToTheServer(String endpoint) {

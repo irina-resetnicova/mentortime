@@ -6,10 +6,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 public class RegistrationPage extends BasePage {
-    //    Конструктор будет вызываться при создании нового объекта RegistrationPage
+
     public RegistrationPage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this); // Инициализация элементов страницы
+        PageFactory.initElements(driver, this);
     }
 
     @FindBy(xpath = ("//div[@class = 'col-sm-10']//input[@id ='input-firstname']"))

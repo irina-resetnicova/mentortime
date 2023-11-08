@@ -6,10 +6,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 public class InscriptionPage extends BasePage {
-    //    Конструктор будет вызываться при создании нового объекта RegistrationPage
+
     public InscriptionPage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this); // Инициализация элементов страницы представленные аннотациями @FindBy
+        PageFactory.initElements(driver, this);
     }
 
     @FindBy(xpath = ("//h1[text()='Your Account Has Been Created!']"))
@@ -25,9 +25,7 @@ public class InscriptionPage extends BasePage {
     public void yourAccountHasBeenCreated() {
         clickElement(btnContinue);
 
-
     }
-
 }
 
 
