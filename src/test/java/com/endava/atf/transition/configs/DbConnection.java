@@ -21,9 +21,8 @@ public class DbConnection {
     private static Connection initialization() throws SQLException, ClassNotFoundException {
         final String DB_URL = (String) TestContext.getProperties().get("db_url");
         final String USER = (String) TestContext.getProperties().get("db_username");
-        ;
         final String PASS = (String) TestContext.getProperties().get("db_password");
-        ;
+
 
         connection = DriverManager.getConnection(DB_URL, USER, PASS);
 

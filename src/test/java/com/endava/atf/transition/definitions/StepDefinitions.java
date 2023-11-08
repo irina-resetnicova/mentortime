@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions {
@@ -101,7 +102,7 @@ public class StepDefinitions {
     @Given("the User does not have any account with {}")
     public void userDoesNotHaveAccount(String email) throws SQLException {
         log.info("User does not have any account");
-        int rsDeleteAll = query.deleteAllByEmail(email).executeUpdate();
+        query.deleteAllByEmail(email).executeUpdate();
     }
 
     @When("the User registers with first name does not meet requirements")
@@ -155,8 +156,8 @@ public class StepDefinitions {
     @Given("the User already has an account")
     public void userIsAlreadyRegistered() throws SQLException {
 
-        int rsDelete = query.deleteCustomerByEmail("john@gmail.com").executeUpdate();
-        int rsInsert = query.insertCustomer("John", "Baiden", "john@gmail.com", "1234").executeUpdate();
+        query.deleteCustomerByEmail("john@gmail.com").executeUpdate();
+        query.insertCustomer("John", "Baiden", "john@gmail.com", "1234").executeUpdate();
 
         log.info("User has already its account");
 
