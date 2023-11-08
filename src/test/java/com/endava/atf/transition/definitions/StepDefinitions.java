@@ -1,5 +1,6 @@
 package com.endava.atf.transition.definitions;
 
+import com.endava.atf.transition.dao.UserDao;
 import com.endava.atf.transition.drivers.Driver;
 import com.endava.atf.transition.testDataUI.*;
 import com.endava.atf.transition.utils.Helper;

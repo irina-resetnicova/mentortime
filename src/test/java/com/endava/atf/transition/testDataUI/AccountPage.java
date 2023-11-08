@@ -9,7 +9,7 @@ public class AccountPage extends BasePage {
 
     public AccountPage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this); // Инициализация элементов страницы
+        PageFactory.initElements(driver, this);
     }
 
     @FindBy(xpath = ("/html/body/nav/div/div[2]/ul/li[2]/div/a/span"))

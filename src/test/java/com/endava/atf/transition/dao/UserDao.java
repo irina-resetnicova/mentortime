@@ -1,4 +1,4 @@
-package com.endava.atf.transition.testDataUI;
+package com.endava.atf.transition.dao;
 
 import com.endava.atf.transition.configs.DbConnection;
 
@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UserDao {
-    private Connection connection;
+    private final Connection connection;
 
     public PreparedStatement insertCustomer(String firstname, String lastname, String email, String password) throws SQLException {
 
