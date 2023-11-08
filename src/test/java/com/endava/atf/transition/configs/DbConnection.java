@@ -1,11 +1,8 @@
 package com.endava.atf.transition.configs;
 
-//import com.endava.atf.transition.definitions.StepDefinitionsAPI;
-
 import com.endava.atf.transition.context.TestContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
