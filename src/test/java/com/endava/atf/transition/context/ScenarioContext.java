@@ -7,13 +7,9 @@ public class ScenarioContext {
     private static ScenarioContext instance;
     private Map<String, Object> scenarioContext;
 
-    private   ScenarioContext() {
+    private ScenarioContext() {
         scenarioContext = new HashMap<>();
     }
-
-//    public ScenarioContext(Map<String, Object> scenarioContext) {
-//        this.scenarioContext = scenarioContext;
-//    }
 
     public static ScenarioContext getInstance() {
         if (instance == null) {

@@ -13,23 +13,8 @@ import org.junit.runner.RunWith;
                 "html:target/cucumber-reports/report.html",
         }
 
-//        ,tags = ("@RegistrationUI")
+        ,tags = ("")
 
 )
 public class TestRunner {
 }
-
-
-
-
-
-
-
-
-
-
-//"pretty": Этот плагин выводит результаты выполнения тестов в удобочитаемом текстовом формате в консоли.
-// "json:target/cucumber-reports/report.json": Этот плагин сохраняет результаты выполнения тестов в формате JSON в указанном файле.
-//"html:target/cucumber-reports/report.html": Этот плагин создает HTML-отчет о выполнении тестов.
-// "junit:target/cucumber-reports/cucumber.xml": Этот плагин генерирует отчеты в формате JUnit XML, что полезно,
-// если вы хотите интегрировать тесты Cucumber в систему непрерывной интеграции.

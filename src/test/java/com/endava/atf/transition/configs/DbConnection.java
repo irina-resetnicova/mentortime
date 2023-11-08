@@ -1,6 +1,7 @@
-package com.endava.atf.transition.config.DataBase;
+package com.endava.atf.transition.configs;
 
 //import com.endava.atf.transition.definitions.StepDefinitionsAPI;
+
 import com.endava.atf.transition.context.TestContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,11 +20,11 @@ public class DbConnection {
 
     private static Connection initialization() throws SQLException, ClassNotFoundException {
         final String DB_URL = (String) TestContext.getProperties().get("db_url");
-        final String USER = (String) TestContext.getProperties().get("db_username");;
-        final String PASS = (String) TestContext.getProperties().get("db_password");;
+        final String USER = (String) TestContext.getProperties().get("db_username");
+        ;
+        final String PASS = (String) TestContext.getProperties().get("db_password");
+        ;
 
-        // read values from AppConfiguration
-        // установливается соединение Connection с базой данных(параметры) через JDBC drivers
         connection = DriverManager.getConnection(DB_URL, USER, PASS);
 
         log.info("Connected to database");
@@ -42,8 +43,8 @@ public class DbConnection {
     }
 
     public static void closeConnection() {
-        if(connection!=null)
-        connection = null;
+        if (connection != null)
+            connection = null;
     }
 
     public static Connection getConnection() {

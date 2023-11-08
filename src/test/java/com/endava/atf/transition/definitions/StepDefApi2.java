@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static io.restassured.RestAssured.given;
 
 public class StepDefApi2 {
@@ -29,12 +28,11 @@ public class StepDefApi2 {
     private UnSuccessReg unSuccessReg;
     Response response;
     ResponseSuccessRegistration responseSucReg = new ResponseSuccessRegistration();
+    HashMap<Object, Object> map = new HashMap<>();
 
     public StepDefApi2() {
         this.scenarioContext = ScenarioContext.getInstance();
     }
-
-    HashMap<Object, Object> map = new HashMap<>();
 
     @Given("the base URI is set to  {string}")
     public void theBaseURIIsSetToHttps(String baseURI) {
@@ -53,7 +51,6 @@ public class StepDefApi2 {
                 get(endpoint);
 
         scenarioContext.setContext("response", response);
-
     }
 
     @Then("the response code should be {}")
@@ -66,12 +63,11 @@ public class StepDefApi2 {
                 .statusCode(expectedStatusCode);
 
         scenarioContext.setContext("response", response);
-
     }
 
     @Then("the response is retrieved and displayed on the screen")
     public void listOfUsersAppearsOnTheScreen() {
-        log.info("Get response in: " + ContentType.JSON );
+        log.info("Get response in: " + ContentType.JSON);
         Response response = (Response) scenarioContext.getContext("response");
         response.then().
                 log().body().
@@ -88,15 +84,13 @@ public class StepDefApi2 {
 
         String jsonResponse = response.asString();
 
-        String filePath = "src/test/java/com/endava/atf/transition/jsonCollection/ListUsers/user_response.json";
+        String filePath = "src/test/java/com/endava/atf/transition/jsonCollection/user_response.json";
         String jsonFromFile = new String(Files.readAllBytes(Paths.get(filePath)));
 
         JsonObject expectedObj = JsonParser.parseString(jsonFromFile).getAsJsonObject();
         JsonObject actualObj = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
         Assert.assertEquals(expectedObj, actualObj);
-
-
     }
 
     @Then("all users have emails end on reqres.in")
@@ -114,10 +108,8 @@ public class StepDefApi2 {
             System.out.println();
 
         }
-
         Assert.assertTrue(users.stream().allMatch(x -> x.getEmail().endsWith("reqres.in")));
         scenarioContext.setContext("response", response);
-
     }
 
     @Then("all avatars are displaying on the screen from the list")
@@ -132,11 +124,9 @@ public class StepDefApi2 {
         for (String avatar : avatars) {
             System.out.println(avatar);
         }
-
         scenarioContext.setContext("response", response);
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////
     @Then("the List of Resources can be sorted by years")
     public void listRESOURCECanBeSortedByYears() {
         log.info("List<RESOURCE> can be sorted by years");
@@ -151,10 +141,9 @@ public class StepDefApi2 {
         Assert.assertEquals(sortedYears, years);
         System.out.println(years);
         System.out.println(sortedYears);
-
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     @When("a POST request is sent to the Server with the endpoint {string}")
     public void postRequestIsSentToTheServer(String endpoint) {
@@ -171,7 +160,6 @@ public class StepDefApi2 {
                 when().
                 post(endpoint);
 
-        //consumer
         map.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
         scenarioContext.setContext("response", response);
     }
@@ -180,7 +168,6 @@ public class StepDefApi2 {
     public void getPostResponseReg() {
         log.info("Get the POST response");
         Response response = (Response) scenarioContext.getContext("response");
-
         response.then().
                 log().body().
                 contentType(ContentType.JSON).
@@ -203,11 +190,8 @@ public class StepDefApi2 {
         Response response = (Response) scenarioContext.getContext("response");
         Assert.assertNotNull(successReg.getId());
         Assert.assertNotNull(successReg.getToken());
-
-
         scenarioContext.setContext("response", response);
     }
-//////////////////////////////////////////////////////////////////////////////////
 
     @When("a POST request with an empty password is sent to the server with the endpoint {string}")
     public void postRequestWherePasswordIsEmptyIsSentToTheServer(String endpoint) {
@@ -223,7 +207,6 @@ public class StepDefApi2 {
                 post(endpoint);
         scenarioContext.setContext("response", response);
     }
-
 
     @Then("the Post response is obtained and displayed")
     public void getPostResponseContentMissingPassword() {
@@ -250,7 +233,6 @@ public class StepDefApi2 {
         System.out.println("expected status code is: " + expectedStatusCode);
         Assert.assertEquals(expectedStatusCode, actualStatusCode);
 
-
         scenarioContext.setContext("response", response);
     }
 
@@ -258,7 +240,6 @@ public class StepDefApi2 {
     @When("a POST request is sent to the Server: {string}")
     public void aPOSTRequestIsSentToTheServer(String endpoint) {
         log.info("The POST the response is retrieved");
-
         Register user = new Register("eve.holt@reqres.in", "pistol");
         response = given().
                 body(user).
@@ -266,7 +247,6 @@ public class StepDefApi2 {
                 when().
                 post(endpoint);
         scenarioContext.setContext("response", response);
-
     }
 
     @Then("the Post the response is retrieved")
@@ -276,16 +256,12 @@ public class StepDefApi2 {
         response.then().
                 log().body().
                 extract().response();
-
         successReg = response.as(SuccessReg.class);
 
         Assert.assertEquals(successReg.getId(), responseSucReg.getExpectedId());
         Assert.assertEquals(successReg.getToken(), responseSucReg.getExpectedToken());
         scenarioContext.setContext("response", response);
-
     }
-
-
 }
 
 
